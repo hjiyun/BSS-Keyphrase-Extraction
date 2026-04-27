@@ -1,0 +1,70 @@
+======================================================================
+AWSGLD v5 키프레이즈 추출 결과 (Phrase 기반)
+======================================================================
+
+문서: C-84
+시간: 2026-04-14 15:53:30
+
+  lambda_prior: 0.5
+  FDR_CUTOFF: 0.1
+  T: 5000
+  BURN_IN: 500
+  TAU: 1.0
+  SIGMA2: 3.0
+  n: 917
+  seeds: 4
+
+======================================================================
+[AWSGLD_v5] - 50개
+----------------------------------------------------------------------
+    1. demand distribut                         (0.9361) [2-gram]
+    2. network topolog                          (0.8650) [2-gram]
+    3. possibl behavior                         (0.8388) [2-gram]
+    4. option                                   (0.8342) [1-gram]
+    5. anarchi price                            (0.8184) [2-gram]
+    6. game price                               (0.8171) [2-gram]
+    7. social util                              (0.7982) [2-gram]
+    8. instrument server                        (0.7890) [2-gram]
+    9. topolog demand                           (0.7768) [2-gram]
+   10. ci αij                                   (0.7738) [2-gram]
+   11. anarchi high                             (0.7723) [2-gram]
+   12. si ai                                    (0.7629) [2-gram]
+   13. optimum replica                          (0.7447) [2-gram]
+   14. converg                                  (0.7306) [1-gram]
+   15. server distanc                           (0.7275) [2-gram]
+   16. number server                            (0.7151) [2-gram]
+   17. topolog analysi                          (0.7132) [2-gram]
+   18. incent configur                          (0.7092) [2-gram]
+   19. correspond                               (0.7072) [1-gram]
+   20. optimum configur                         (0.7057) [2-gram]
+   21. equilibrium server                       (0.7031) [2-gram]
+   22. cluster placement                        (0.7018) [2-gram]
+   23. game server                              (0.7003) [2-gram]
+   24. underli topolog                          (0.7003) [2-gram]
+   25. ci ci                                    (0.6945) [2-gram]
+   26. dark node                                (0.6883) [2-gram]
+   27. effect payment                           (0.6745) [2-gram]
+   28. tj                                       (0.6532) [1-gram]
+   29. anarchi poa                              (0.6513) [2-gram]
+   30. anarchi gener                            (0.6436) [2-gram]
+   31. equilibrium basic                        (0.6155) [2-gram]
+   32. case nash                                (0.6084) [2-gram]
+   33. latter                                   (0.6076) [1-gram]
+   34. cost function                            (0.6065) [2-gram]
+   35. matrix                                   (0.6021) [1-gram]
+   36. client                                   (0.6019) [1-gram]
+   37. locat game                               (0.6005) [2-gram]
+   38. maximum                                  (0.5976) [1-gram]
+   39. replica cluster                          (0.5942) [2-gram]
+   40. analysi simul                            (0.5936) [2-gram]
+   41. solut nash                               (0.5934) [2-gram]
+   42. appendix                                 (0.5863) [1-gram]
+   43. linear program                           (0.5861) [2-gram]
+   44. anarchi ratio                            (0.5822) [2-gram]
+   45. cost social                              (0.5817) [2-gram]
+   46. ne ne                                    (0.5774) [2-gram]
+   47. player strategi                          (0.5756) [2-gram]
+   48. site                                     (0.5726) [1-gram]
+   49. slightli                                 (0.5722) [1-gram]
+   50. multi object                             (0.5695) [2-gram]
+

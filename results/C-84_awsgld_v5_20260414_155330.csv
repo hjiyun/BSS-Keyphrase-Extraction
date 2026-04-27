@@ -1,0 +1,67 @@
+# AWSGLD v5 키프레이즈 추출 결과
+Document,C-84
+Timestamp,2026-04-14 15:53:30
+
+# 설정
+lambda_prior,0.5
+FDR_CUTOFF,0.1
+T,5000
+BURN_IN,500
+TAU,1.0
+SIGMA2,3.0
+n,917
+seeds,4
+
+# AWSGLD_v5
+Rank,Phrase,Score,N-gram
+1,demand distribut,0.936122,2
+2,network topolog,0.865021,2
+3,possibl behavior,0.838793,2
+4,option,0.834227,1
+5,anarchi price,0.818351,2
+6,game price,0.817134,2
+7,social util,0.798172,2
+8,instrument server,0.788965,2
+9,topolog demand,0.776805,2
+10,ci αij,0.773758,2
+11,anarchi high,0.772288,2
+12,si ai,0.762907,2
+13,optimum replica,0.744720,2
+14,converg,0.730595,1
+15,server distanc,0.727513,2
+16,number server,0.715071,2
+17,topolog analysi,0.713233,2
+18,incent configur,0.709207,2
+19,correspond,0.707216,1
+20,optimum configur,0.705730,2
+21,equilibrium server,0.703139,2
+22,cluster placement,0.701780,2
+23,game server,0.700313,2
+24,underli topolog,0.700257,2
+25,ci ci,0.694506,2
+26,dark node,0.688342,2
+27,effect payment,0.674526,2
+28,tj,0.653185,1
+29,anarchi poa,0.651277,2
+30,anarchi gener,0.643648,2
+31,equilibrium basic,0.615519,2
+32,case nash,0.608418,2
+33,latter,0.607633,1
+34,cost function,0.606486,2
+35,matrix,0.602071,1
+36,client,0.601895,1
+37,locat game,0.600483,2
+38,maximum,0.597559,1
+39,replica cluster,0.594157,2
+40,analysi simul,0.593611,2
+41,solut nash,0.593350,2
+42,appendix,0.586341,1
+43,linear program,0.586107,2
+44,anarchi ratio,0.582248,2
+45,cost social,0.581742,2
+46,ne ne,0.577445,2
+47,player strategi,0.575616,2
+48,site,0.572641,1
+49,slightli,0.572151,1
+50,multi object,0.569543,2
+

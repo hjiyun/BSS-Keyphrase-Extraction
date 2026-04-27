@@ -1,0 +1,326 @@
+{
+  "document": "C-84",
+  "timestamp": "2026-04-14 15:53:30",
+  "settings": {
+    "lambda_prior": 0.5,
+    "FDR_CUTOFF": 0.1,
+    "T": 5000,
+    "BURN_IN": 500,
+    "TAU": 1.0,
+    "SIGMA2": 3.0,
+    "n": 917,
+    "seeds": 4
+  },
+  "methods": {
+    "AWSGLD_v5": [
+      {
+        "rank": 1,
+        "phrase": "demand distribut",
+        "score": 0.936121962732958,
+        "ngram": 2
+      },
+      {
+        "rank": 2,
+        "phrase": "network topolog",
+        "score": 0.8650211692608424,
+        "ngram": 2
+      },
+      {
+        "rank": 3,
+        "phrase": "possibl behavior",
+        "score": 0.8387925787091041,
+        "ngram": 2
+      },
+      {
+        "rank": 4,
+        "phrase": "option",
+        "score": 0.8342272917748328,
+        "ngram": 1
+      },
+      {
+        "rank": 5,
+        "phrase": "anarchi price",
+        "score": 0.8183513953177846,
+        "ngram": 2
+      },
+      {
+        "rank": 6,
+        "phrase": "game price",
+        "score": 0.8171342039385738,
+        "ngram": 2
+      },
+      {
+        "rank": 7,
+        "phrase": "social util",
+        "score": 0.7981721220009541,
+        "ngram": 2
+      },
+      {
+        "rank": 8,
+        "phrase": "instrument server",
+        "score": 0.7889649537838551,
+        "ngram": 2
+      },
+      {
+        "rank": 9,
+        "phrase": "topolog demand",
+        "score": 0.7768047304027929,
+        "ngram": 2
+      },
+      {
+        "rank": 10,
+        "phrase": "ci αij",
+        "score": 0.7737584796255642,
+        "ngram": 2
+      },
+      {
+        "rank": 11,
+        "phrase": "anarchi high",
+        "score": 0.7722878823229211,
+        "ngram": 2
+      },
+      {
+        "rank": 12,
+        "phrase": "si ai",
+        "score": 0.7629068600479885,
+        "ngram": 2
+      },
+      {
+        "rank": 13,
+        "phrase": "optimum replica",
+        "score": 0.7447195220219347,
+        "ngram": 2
+      },
+      {
+        "rank": 14,
+        "phrase": "converg",
+        "score": 0.730594953762161,
+        "ngram": 1
+      },
+      {
+        "rank": 15,
+        "phrase": "server distanc",
+        "score": 0.7275129507758584,
+        "ngram": 2
+      },
+      {
+        "rank": 16,
+        "phrase": "number server",
+        "score": 0.7150712274060032,
+        "ngram": 2
+      },
+      {
+        "rank": 17,
+        "phrase": "topolog analysi",
+        "score": 0.7132325367082414,
+        "ngram": 2
+      },
+      {
+        "rank": 18,
+        "phrase": "incent configur",
+        "score": 0.709206562733193,
+        "ngram": 2
+      },
+      {
+        "rank": 19,
+        "phrase": "correspond",
+        "score": 0.7072163544039823,
+        "ngram": 1
+      },
+      {
+        "rank": 20,
+        "phrase": "optimum configur",
+        "score": 0.7057303768984001,
+        "ngram": 2
+      },
+      {
+        "rank": 21,
+        "phrase": "equilibrium server",
+        "score": 0.7031389297464724,
+        "ngram": 2
+      },
+      {
+        "rank": 22,
+        "phrase": "cluster placement",
+        "score": 0.701779931063825,
+        "ngram": 2
+      },
+      {
+        "rank": 23,
+        "phrase": "game server",
+        "score": 0.7003129335385497,
+        "ngram": 2
+      },
+      {
+        "rank": 24,
+        "phrase": "underli topolog",
+        "score": 0.7002574244998723,
+        "ngram": 2
+      },
+      {
+        "rank": 25,
+        "phrase": "ci ci",
+        "score": 0.6945062679886517,
+        "ngram": 2
+      },
+      {
+        "rank": 26,
+        "phrase": "dark node",
+        "score": 0.6883423066401456,
+        "ngram": 2
+      },
+      {
+        "rank": 27,
+        "phrase": "effect payment",
+        "score": 0.6745261735526026,
+        "ngram": 2
+      },
+      {
+        "rank": 28,
+        "phrase": "tj",
+        "score": 0.653184613146462,
+        "ngram": 1
+      },
+      {
+        "rank": 29,
+        "phrase": "anarchi poa",
+        "score": 0.6512771373337112,
+        "ngram": 2
+      },
+      {
+        "rank": 30,
+        "phrase": "anarchi gener",
+        "score": 0.6436483273611366,
+        "ngram": 2
+      },
+      {
+        "rank": 31,
+        "phrase": "equilibrium basic",
+        "score": 0.6155187680355885,
+        "ngram": 2
+      },
+      {
+        "rank": 32,
+        "phrase": "case nash",
+        "score": 0.6084182792522184,
+        "ngram": 2
+      },
+      {
+        "rank": 33,
+        "phrase": "latter",
+        "score": 0.607632941290049,
+        "ngram": 1
+      },
+      {
+        "rank": 34,
+        "phrase": "cost function",
+        "score": 0.6064855846617648,
+        "ngram": 2
+      },
+      {
+        "rank": 35,
+        "phrase": "matrix",
+        "score": 0.6020709342746606,
+        "ngram": 1
+      },
+      {
+        "rank": 36,
+        "phrase": "client",
+        "score": 0.6018950579763783,
+        "ngram": 1
+      },
+      {
+        "rank": 37,
+        "phrase": "locat game",
+        "score": 0.6004832101146671,
+        "ngram": 2
+      },
+      {
+        "rank": 38,
+        "phrase": "maximum",
+        "score": 0.5975588956240543,
+        "ngram": 1
+      },
+      {
+        "rank": 39,
+        "phrase": "replica cluster",
+        "score": 0.5941568320634667,
+        "ngram": 2
+      },
+      {
+        "rank": 40,
+        "phrase": "analysi simul",
+        "score": 0.5936105305133825,
+        "ngram": 2
+      },
+      {
+        "rank": 41,
+        "phrase": "solut nash",
+        "score": 0.5933502821808248,
+        "ngram": 2
+      },
+      {
+        "rank": 42,
+        "phrase": "appendix",
+        "score": 0.586340760726031,
+        "ngram": 1
+      },
+      {
+        "rank": 43,
+        "phrase": "linear program",
+        "score": 0.586107053113222,
+        "ngram": 2
+      },
+      {
+        "rank": 44,
+        "phrase": "anarchi ratio",
+        "score": 0.5822479315611276,
+        "ngram": 2
+      },
+      {
+        "rank": 45,
+        "phrase": "cost social",
+        "score": 0.5817417581938327,
+        "ngram": 2
+      },
+      {
+        "rank": 46,
+        "phrase": "ne ne",
+        "score": 0.5774452772901247,
+        "ngram": 2
+      },
+      {
+        "rank": 47,
+        "phrase": "player strategi",
+        "score": 0.5756159307324029,
+        "ngram": 2
+      },
+      {
+        "rank": 48,
+        "phrase": "site",
+        "score": 0.5726405004730751,
+        "ngram": 1
+      },
+      {
+        "rank": 49,
+        "phrase": "slightli",
+        "score": 0.572150846937586,
+        "ngram": 1
+      },
+      {
+        "rank": 50,
+        "phrase": "multi object",
+        "score": 0.5695426167315676,
+        "ngram": 2
+      }
+    ]
+  },
+  "performance": {
+    "cutoff": 0.7889649537838551,
+    "total_extracted": 8,
+    "TP": 5,
+    "NS_TP": 1,
+    "Precision": 0.625,
+    "Recall": 0.45454545454545453
+  }
+}

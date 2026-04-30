@@ -1,0 +1,468 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{epsfig}
+\usepackage{amsfonts}
+\def\boxit#1{\vbox{\hrule\hbox{\vrule\kern6pt \vbox{\kern6pt#1\kern5pt}
+\kern6pt\vrule}\hrule}}
+\renewcommand{\baselinestretch}{1.2}   %1.88
+\setlength{\oddsidemargin}{0.0in} \setlength{\evensidemargin}{0.0in}
+\setlength{\topmargin}{-0.25in}  % 0.3 -0.1in
+\setlength{\textheight}{9.2in}  % 9.1 9.3in
+\setlength{\textwidth}{6.7in} \setlength{\parindent}{0.25in}
+\setlength{\headsep}{0in}
+\newcommand{\bX}{\utwi{X}}
+\newcommand{\mpi}{\cal \pi}
+\newcommand{\bb}{\utwi{b}}
+\newcommand{\bd}{\utwi{d}}
+\newcommand{\be}{\utwi{e}}
+\newcommand{\bs}{\utwi{s}}
+\newcommand{\by}{\utwi{y}}
+\newcommand{\bx}{\utwi{x}}
+\newcommand{\bz}{\utwi{z}}
+\newcommand{\bu}{\utwi{u}}
+\newcommand{\bv}{\utwi{v}}
+\newcommand{\bw}{\utwi{w}}
+\newcommand{\bZ}{\utwi{Z}}
+\newcommand{\bR}{\utwi{R}}
+\newcommand{\bA}{\utwi{A}}
+\newcommand{\bt}{\utwi{t}}
+\newcommand{\bT}{\utwi{T}}
+\newcommand{\bY}{\utwi{Y}}
+\newcommand{\bg}{\utwi{g}}
+\newcommand{\bH}{\utwi{H}}
+\newcommand{\bh}{\utwi{h}}
+\newcommand{\mN}{\mathbb{N}}
+\newcommand{\mR}{\mathbb{R}}
+\newcommand{\mE}{\mathbb{E}}
+\newcommand{\mT}{\mathbb{T}}
+\newcommand{\mK}{{\cal K}}
+\newcommand{\mF}{{\cal F}}
+\newcommand{\mH}{{\cal H}}
+\newcommand{\mX}{{\cal X}}
+\newcommand{\mY}{{\cal Y}}
+\newcommand{\mU}{{\cal U}}
+\newcommand{\mM}{{\cal M}}
+\newcommand{\mD}{{\cal D}}
+\newcommand{\mS}{{\cal S}}
+\newcommand{\me}{m_{\rm eff}}
+\newcommand{\btheta}{\utwi{\theta}}
+\newcommand{\bepsilon}{\utwi{\epsilon}}
+\newcommand{\bmu}{\utwi{\mu}}
+\newcommand{\balpha}{\utwi{\alpha}}
+\newcommand{\bbeta}{\utwi{\beta}}
+\newcommand{\blambda}{\utwi{\lambda}}
+\newcommand{\bgamma}{\utwi{\gamma}}
+\newcommand{\bomega}{\utwi{\omega}}
+\newcommand{\bnu}{\utwi{\nu}}
+\newcommand{\Hu}{H\"{u}rzeler and K\"{u}nsch}
+\newcommand{\bxi}{\utwi{\xi}}
+\newcommand{\bpsi}{\utwi{\psi}}
+\newcommand{\bpi}{\utwi{\pi}}
+\newcommand{\seta}{\sigma_{\eta}}
+\newcommand{\bthetaL}{\btheta_{\Lambda}}
+\newcommand{\brho}{\utwi{\rho}}
+\newcommand{\mFDR}{\mbox{FDR}}
+\newcommand{\utwi}[1]{\mbox{\boldmath $#1$}}
+\newenvironment{proof}{\trivlist\item[\hskip \labelsep{\sc Proof:}]}
+ {\unskip\nobreak\ \lower.3ex\hbox{$\Box$}\endtrivlist}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{df}{Definition}[section]
+\newtheorem{cor}{Corollary}[section]
+\newtheorem{formula}{Formula}[section]
+\def\boxit#1{\vbox{\hrule\hbox{\vrule\kern6pt
+          \vbox{\kern6pt#1\kern6pt}\kern6pt\vrule}\hrule}}
+%\setlength{\parskip}{3mm}
+\pagestyle{plain}
+\begin{document}
+\thispagestyle{empty}
+
+%=====================================================================================================================================================
+\title{BNTM
+}
+
+\author{Sooyoung Cheon \thanks{
+ }
+}
+\maketitle
+
+
+%=====================================================================================================================================================
+\begin{abstract}
+
+Keyphrase extraction plays an important role in summarizing large text collections, identifying salient document content, and supporting downstream tasks such as topic discovery and trend analysis. However, many existing methods are unsupervised, provide only relative ranking scores, and rely on ad hoc thresholding rules for final keyphrase selection. Even in semi-supervised settings, partially observed positive labels are often not fully exploited within a coherent probabilistic framework. This study considers posterior inference for the graph-based Bayesian semi-supervised (BSS) keyphrase extraction model of Wang (2020), in which each candidate phrase is associated with an observed label and a latent true label, and the probability of true keyphrase relevance is linked to a latent importance score through a logit transformation. While the BSS model provides a principled Bayesian framework for semi-supervised keyphrase extraction, posterior computation becomes challenging in high-dimensional settings with complex and multimodal posterior structures. To address this issue, we propose the use of adaptive weighted stochastic gradient Langevin dynamics (AWSGLD) as the posterior inference algorithm for the BSS model. By adaptively modifying the gradient update according to the current energy level, AWSGLD is expected to improve exploration of complex posterior landscapes, reduce local trapping, and enhance scalability through stochastic mini-batch computation. The proposed approach therefore strengthens the inferential and computational performance of the existing BSS model without altering its probabilistic structure. The proposed AWSGLD-based framework is evaluated through synthetic experiments for parameter recovery and sampler efficiency, together with semi-synthetic document-level benchmark studies for practical keyphrase extraction. The results are expected to show that AWSGLD provides an efficient, stable, and scalable Bayesian inference engine for graph-based semi-supervised keyphrase extraction.
+
+{\bf  Keywords:} 
+ 
+\end{abstract}
+
+%=====================================================================================================================================================
+\section{Introduction}
+
+%==========================
+% =========================
+\section{Simulation Studies}
+\label{sec:simulation}
+
+To evaluate the proposed use of adaptive weighted stochastic gradient Langevin dynamics (AWSGLD) for posterior inference in the graph-based Bayesian semi-supervised (BSS) model for keyphrase extraction, we conduct four complementary experiments. The first three are synthetic studies designed to isolate the inferential and computational advantages of AWSGLD under controlled truth. The fourth is a document-level semi-synthetic benchmark study, constructed in the spirit of Wang (2020), to examine whether those advantages translate into improved practical performance in keyphrase extraction under partially observed labels.
+
+This design reflects the methodological objective of the present study. Since the probabilistic structure of the BSS model is inherited from Wang (2020), the main contribution here is to improve posterior computation for that model by replacing conventional Metropolis--Hastings-within-Gibbs samplers with AWSGLD. The simulation study is therefore structured to address the following questions: (i) whether AWSGLD improves recovery of the latent BSS parameters, (ii) whether it better escapes local modes and produces more stable inference, (iii) whether it scales more effectively to large candidate sets, and (iv) whether those gains improve document-level keyphrase extraction performance.
+
+\subsection{Study 1A: Synthetic experiment for parameter recovery}
+\label{subsec:sim_recovery}
+
+The purpose of Study 1A is to compare posterior recovery of the main BSS parameters under settings where the true latent parameters are known.
+
+\subsubsection{Data-generating mechanism}
+
+For each simulated dataset, let $p$ denote the number of candidate phrases. Each phrase $i=1,\ldots,p$ is assigned to one of $G$ latent graph groups, denoted by
+\[
+g_i \in \{1,\ldots,G\}.
+\]
+We then specify group-specific signal levels
+\[
+\mu_g \in \{\theta_S,\theta_W,\theta_N\},
+\]
+corresponding to strong, weak, and null groups, respectively. Conditional on $g_i$, the latent importance parameter is generated by
+\[
+\theta_i = \mu_{g_i} + \varepsilon_i, \qquad \varepsilon_i \sim N(0,\sigma_\theta^2).
+\]
+The probability that phrase $i$ is a true keyphrase is defined by the logit link
+\[
+\pi_i = \Pr(y_i^*=1)=\frac{\exp(\theta_i)}{1+\exp(\theta_i)},
+\]
+where $y_i^*$ is the latent true label. The true labels are generated as
+\[
+y_i^* \sim \mathrm{Bernoulli}(\pi_i), \qquad i=1,\ldots,p.
+\]
+
+To mimic the positive-and-unlabeled structure of the BSS model, the observed labels are generated through one-sided missingness:
+\[
+\Pr(y_i=0\mid y_i^*=1)=\alpha, \qquad \Pr(y_i=1\mid y_i^*=0)=0.
+\]
+Equivalently,
+\[
+\Pr(y_i=1\mid y_i^*=1)=1-\alpha, \qquad \Pr(y_i=1\mid y_i^*=0)=0.
+\]
+In implementation, we generate
+\[
+y_i =
+\begin{cases}
+1, & \text{if } y_i^*=1 \text{ and } u_i>\alpha,\\
+0, & \text{otherwise},
+\end{cases}
+\qquad u_i \sim \mathrm{Uniform}(0,1).
+\]
+
+We also generate an undirected weighted graph for the candidate phrases. Specifically, conditional on group memberships,
+\[
+\Pr(A_{ij}=1 \mid g_i=g_j)=\rho_{\mathrm{in}},
+\qquad
+\Pr(A_{ij}=1 \mid g_i\neq g_j)=\rho_{\mathrm{out}},
+\]
+with $\rho_{\mathrm{in}}>\rho_{\mathrm{out}}$, so that phrases within the same latent group are more strongly connected. The graph matrix $A$ is row-normalized to form the graph-related quantity used in the BSS prior.
+
+\subsubsection{Baseline parameter settings}
+
+In the main setting, we use
+\[
+p=1000, \qquad G=20, \qquad \sigma_\theta=0.4.
+\]
+Among the $G$ groups, two are designated as strong-signal groups, three as weak-signal groups, and the remaining fifteen as null groups. The baseline signal strengths are set to
+\[
+\theta_S=2.2,\qquad \theta_W=0.5,\qquad \theta_N=-2.0,
+\]
+which yield approximately
+\[
+logit^{-1}(2.2)\approx 0.900,\qquad
+logit^{-1}(0.5)\approx 0.622,\qquad
+logit^{-1}(-2.0)\approx 0.119.
+\]
+The graph density parameters are set to
+\[
+\rho_{\mathrm{in}}=0.15,\qquad \rho_{\mathrm{out}}=0.03,
+\]
+so that the graph is informative but not degenerate.
+
+\subsubsection{Posterior computation methods}
+
+For each simulated dataset, the same BSS model is fitted using the following posterior computation methods:
+\begin{enumerate}
+    \item tMH-within-Gibbs,
+    \item adaptive component-wise MH-within-Gibbs (acMH),
+    \item SGLD,
+    \item AWSGLD.
+\end{enumerate}
+The first two follow Wang (2020), while the latter two are stochastic-gradient-based samplers. For all methods, the likelihood and prior structure of the BSS model are kept fixed so that the comparison isolates the effect of posterior computation.
+
+\subsubsection{Monte Carlo settings}
+
+For each method and each scenario, we generate $R=100$ independent datasets. Within each dataset, all samplers are run for the same total computational budget. For tMH and acMH, we use a common burn-in period and retain posterior draws after burn-in. For SGLD and AWSGLD, we discard the initial transient segment and average the remaining draws to obtain posterior summaries. To reduce Monte Carlo variability, each stochastic-gradient-based method is repeated over multiple seeds, and the reported results are averaged across seeds and datasets.
+
+\subsubsection{Evaluation criteria}
+
+Because the true latent parameters are known, posterior recovery is assessed using
+\[
+\mathrm{MSE}_{\theta}
+=
+\frac{1}{p}\sum_{i=1}^p(\hat{\theta}_i-\theta_i)^2,
+\qquad
+\mathrm{MSE}_{\pi}
+=
+\frac{1}{p}\sum_{i=1}^p(\hat{\pi}_i-\pi_i)^2,
+\]
+and the bias and RMSE of $\hat{\alpha}$. We also evaluate recovery of the latent true labels $y_i^*$ using
+\begin{enumerate}
+    \item area under the ROC curve (AUC),
+    \item precision,
+    \item recall,
+    \item $F_1$-score.
+\end{enumerate}
+For each metric, we report the Monte Carlo mean and standard error over the $R$ replicate datasets.
+
+\subsubsection{Scenarios}
+
+We consider the following four scenarios:
+\begin{enumerate}
+    \item \textbf{Easy scenario:}
+    \[
+    \theta_S=2.5,\quad \theta_W=1.0,\quad \theta_N=-2.5,\quad \alpha=0.1.
+    \]
+    This setting has strong signal separation and mild missingness.
+
+    \item \textbf{Moderate scenario:}
+    \[
+    \theta_S=2.2,\quad \theta_W=0.5,\quad \theta_N=-2.0,\quad \alpha=0.3.
+    \]
+    This serves as the main baseline setting.
+
+    \item \textbf{Difficult scenario:}
+    \[
+    \theta_S=1.5,\quad \theta_W=0,\quad \theta_N=-1.0,\quad \alpha=0.5.
+    \]
+    This setting creates substantial overlap among signal regimes and severe label incompleteness.
+
+    \item \textbf{Sparse-signal scenario:}
+    the proportion of strong and weak signal groups is reduced so that the total signal proportion is below $5\%$.
+\end{enumerate}
+
+\subsection{Study 1B: Trap-escape and stability experiment}
+\label{subsec:sim_trap}
+
+Study 1B is designed to directly test the main claimed advantage of AWSGLD, namely, its ability to escape local traps and produce more stable posterior inference in difficult energy landscapes.
+
+\subsubsection{Difficult posterior construction}
+
+To induce a multimodal and weakly separated posterior, we generate data under a deliberately challenging setting:
+\[
+\theta_S=1.2,\qquad \theta_W=0.2,\qquad \theta_N=-0.8,\qquad \alpha=0.5,
+\]
+with
+\[
+\sigma_\theta = 0.7,\qquad \rho_{\mathrm{in}}=0.08,\qquad \rho_{\mathrm{out}}=0.05.
+\]
+These values weaken both the signal contrast and the graph informativeness, making it more difficult to distinguish strong, weak, and null candidates. In addition, we assign some groups the same or nearly identical signal levels so that the posterior surface contains flat regions and multiple competing basins.
+
+\subsubsection{Initialization schemes}
+
+For each simulated dataset, each sampler is run from four different initializations:
+\begin{enumerate}
+    \item \textbf{random initialization:} $\theta_i^{(0)} \sim N(0,1)$ independently;
+    \item \textbf{low-signal initialization:} $\theta_i^{(0)}=-2$ for all $i$;
+    \item \textbf{high-signal initialization:} $\theta_i^{(0)}=2$ for all $i$;
+    \item \textbf{TextRank-based initialization:} $\theta_i^{(0)}$ is set proportional to the normalized graph ranking score.
+\end{enumerate}
+This design allows us to examine the dependence of posterior inference on the starting point.
+
+\subsubsection{Repetitions and seeds}
+
+For each dataset and initialization scheme, each sampler is run under $S=10$ random seeds. Thus, the total variation across runs reflects both stochastic Monte Carlo variability and sensitivity to initialization.
+
+\subsubsection{Trap-escape and stability metrics}
+
+In addition to the recovery metrics in Study 1A, we compute the following:
+\begin{enumerate}
+    \item \textbf{between-seed variability of posterior means:}
+    \[
+    V_{\theta}
+    =
+    \frac{1}{p}\sum_{i=1}^p \mathrm{Var}_s(\hat{\theta}_{is}),
+    \]
+    where $\hat{\theta}_{is}$ is the posterior mean of $\theta_i$ under seed $s$;
+    \item \textbf{selected-set overlap across seeds}, measured by the average Jaccard index of the selected keyphrase sets;
+    \item \textbf{best log-posterior reached}, defined as the maximum observed log-posterior value in each run;
+    \item \textbf{energy trace range}, defined as the range of sampled energy values;
+    \item \textbf{trap rate}, defined as the proportion of runs whose final log-posterior falls below a reference high-posterior threshold.
+\end{enumerate}
+Lower between-seed variability and trap rate, together with higher selected-set overlap and larger energy exploration range, indicate better posterior exploration.
+
+\subsection{Study 1C: Scalability experiment under large candidate sets}
+\label{subsec:sim_scalability}
+
+Study 1C examines whether AWSGLD preserves its inferential performance while offering better scalability as the dimension of the candidate space grows.
+
+\subsubsection{Dimension settings}
+
+We vary the number of candidate phrases as
+\[
+p \in \{500, 1000, 3000, 5000\},
+\]
+while fixing the signal proportion and graph-group structure. Specifically, the number of groups is scaled with $p$ so that the average group size remains approximately constant. For example,
+\[
+G \in \{10, 20, 60, 100\}
+\]
+for the four candidate dimensions, respectively.
+
+\subsubsection{Mini-batch settings}
+
+For SGLD and AWSGLD, we additionally vary the mini-batch size as
+\[
+n_{\mathrm{mb}} \in \{0.05N,\, 0.10N,\, 0.20N\},
+\]
+where $N$ denotes the full amount of phrase-level contribution entering the energy function. This allows us to study the tradeoff between noisy gradient estimates and computational cost.
+
+\subsubsection{Evaluation criteria}
+
+For each sampler and each dimension setting, we record:
+\begin{enumerate}
+    \item total runtime,
+    \item effective sample size (ESS),
+    \item ESS per second,
+    \item integrated autocorrelation time (IAT),
+    \item $\mathrm{MSE}_{\theta}$,
+    \item $\mathrm{MSE}_{\pi}$.
+\end{enumerate}
+This experiment is intended to show whether AWSGLD remains competitive in accuracy while becoming more advantageous in computational efficiency as the candidate dimension increases.
+
+\subsection{Study 2: Semi-synthetic document benchmark for keyphrase extraction}
+\label{subsec:sim_benchmark}
+
+The final experiment evaluates whether the computational gains of AWSGLD translate into improved practical performance in document-level keyphrase extraction.
+
+\subsubsection{Benchmark corpus}
+
+We use a benchmark corpus with manually annotated keywords, following the evaluation philosophy of Wang (2020). Documents with very few true keywords are excluded so that the setting remains genuinely semi-supervised. In the baseline configuration, only documents with at least ten annotated keywords are retained.
+
+\subsubsection{Preprocessing}
+
+For each document, we apply the following preprocessing steps:
+\begin{enumerate}
+    \item tokenization,
+    \item part-of-speech tagging,
+    \item removal of non-informative words,
+    \item candidate word or phrase extraction,
+    \item construction of an undirected weighted graph.
+\end{enumerate}
+The edge weight between two candidate vertices is defined as their co-occurrence frequency within a fixed window of size two, following the graph construction strategy used in Wang (2020).
+
+\subsubsection{Observed and hidden keyword construction}
+
+For document $d$, let $\mathcal{K}_d^{\mathrm{true}}$ denote the manually annotated keyword set. We randomly sample a subset
+\[
+\mathcal{K}_d^{\mathrm{obs}} \subset \mathcal{K}_d^{\mathrm{true}}
+\]
+and treat it as the observed keyword set. The remaining true keywords are hidden and form the latent positive set. Thus, for candidate phrase $i$ in document $d$,
+\[
+y_{di}=
+\begin{cases}
+1, & \text{if phrase } i\in\mathcal{K}_d^{\mathrm{obs}},\\
+0, & \text{otherwise},
+\end{cases}
+\qquad
+y_{di}^*=
+\begin{cases}
+1, & \text{if phrase } i\in\mathcal{K}_d^{\mathrm{true}},\\
+0, & \text{otherwise}.
+\end{cases}
+\]
+In the main setting, five true keywords are revealed per document, following Wang (2020). We also consider alternative supervision regimes by revealing
+\begin{enumerate}
+    \item 3 keywords,
+    \item 5 keywords,
+    \item 30\% of the true keywords,
+\end{enumerate}
+whenever feasible. To preserve the semi-supervised nature of the experiment, we require that at least half of the true keywords remain hidden.
+
+\subsubsection{Posterior inference}
+
+Given the observed labels and the document graph, we fit the BSS model using AWSGLD and obtain posterior samples of $(\theta,\alpha,\sigma^2)$. The posterior importance probabilities are computed by
+\[
+\hat{\pi}_{di}=\frac{\exp(\hat{\theta}_{di})}{1+\exp(\hat{\theta}_{di})}.
+\]
+
+\subsubsection{Candidate keyphrase selection}
+
+Candidate keyphrases are identified using the Bayesian FDR rule
+\[
+\widehat{\mathrm{FDR}}(h)
+=
+\frac{\sum_i(1-\hat{\pi}_{di})I(\hat{\pi}_{di}\ge h)}
+{\sum_i I(\hat{\pi}_{di}\ge h)},
+\]
+and the largest threshold $h$ satisfying
+\[
+\widehat{\mathrm{FDR}}(h)\le \gamma
+\]
+is selected. For short documents, we consider
+\[
+\gamma \in \{0.05, 0.10, 0.15, 0.20\}.
+\]
+As in Wang (2020), the observed keywords are always retained as positives for the semi-supervised methods. For TextRank, the observed keywords are also forcibly included in the selected set to avoid an unfair disadvantage.
+
+\subsubsection{Final core keyphrase selection}
+
+To reflect the full inferential pipeline of the present study, we further apply AWSGMCMC to the BSS-derived posterior importance probabilities and obtain the final core keyphrase set. The selection cutoff is chosen through the marginal inclusion score (MIS) and an FDR-based thresholding rule.
+
+\subsubsection{Competing methods}
+
+We compare the following methods:
+\begin{enumerate}
+    \item TextRank (TR),
+    \item graph-based semi-supervised learning (SS),
+    \item BSS with tMH-within-Gibbs,
+    \item BSS with acMH-within-Gibbs,
+    \item BSS with AWSGLD,
+    \item AWSGMCMC-BSS for final core selection.
+\end{enumerate}
+
+\subsubsection{Evaluation criteria}
+
+At the candidate extraction stage, we evaluate:
+\begin{enumerate}
+    \item actual FDR,
+    \item precision,
+    \item recall,
+    \item F-measure.
+\end{enumerate}
+At the final core keyphrase selection stage, we additionally evaluate:
+\begin{enumerate}
+    \item true positive rate (TPR),
+    \item false discovery proportion (FDP),
+    \item empirical FDR,
+    \item top-$K$ precision.
+\end{enumerate}
+
+\subsubsection{Subgroup analysis}
+
+To better understand the behavior of the proposed method, we further stratify documents according to:
+\begin{enumerate}
+    \item the number of true keywords, and
+    \item the proportion of true keywords among all candidates.
+\end{enumerate}
+Documents are divided into quartile-based groups, and performance is summarized within each group. This analysis follows the benchmark-based evaluation strategy of Wang (2020) and allows us to assess whether AWSGLD-based inference better adapts to heterogeneous document characteristics.
+
+\subsection{Summary of simulation design}
+\label{subsec:sim_summary}
+
+The simulation study is designed to directly address the methodological objective of this research. Study 1A evaluates whether AWSGLD improves recovery of the main BSS parameters. Study 1B targets the key claimed advantage of AWSGLD by directly assessing its ability to escape local traps and produce stable posterior inference across initializations and seeds. Study 1C examines whether these gains are preserved as the candidate dimension grows and mini-batch-based computation becomes essential. Finally, Study 2 assesses whether the inferential advantages of AWSGLD translate into better document-level keyphrase extraction and final core keyphrase selection. Together, these experiments provide detailed and targeted evidence for the use of AWSGLD as an improved posterior inference algorithm for the graph-based BSS keyphrase extraction model.
+
+%=====================================================================================================================================================
+\section{Conclusion}
+\par
+
+\bigskip
+\begin{thebibliography}{0}
+\item[] Archer, J. A. (1989) Constant hazard against a change-point alternative: a Bayesian approach with censored data, {\it Communicaiton in Statistics-Theory and Method}, 18, 10, 3801--3819.
+\end{thebibliography}
+
+\end{document}

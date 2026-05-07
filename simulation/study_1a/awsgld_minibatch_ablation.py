@@ -11,7 +11,7 @@ Wall-clock time recorded per trial.
 
 Run
 ---
-python3 /home/jiyoon/3차/BSS-Keyphrase-Extraction-master/simlation/minibatch_easy_0504.py
+python3 simulation/awsgld_minibatch_ablation.py
 """
 
 import json
@@ -276,8 +276,8 @@ def summarize_trials(results):
 
 def main():
     out_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(out_dir, "minibatch_easy_0504_summary.json")
-    png_path = os.path.join(out_dir, "minibatch_easy_0504_summary.png")
+    json_path = os.path.join(out_dir, "awsgld_minibatch_ablation_summary.json")
+    png_path = os.path.join(out_dir, "awsgld_minibatch_ablation_summary.png")
 
     print("=" * 72)
     print(f"Plan A — Minibatch AWSGLD on {DEFAULT_SCENARIO['name']}")

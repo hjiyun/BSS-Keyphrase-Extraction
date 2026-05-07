@@ -16,7 +16,7 @@ import time
 from datetime import datetime, timedelta
 
 # ========== 설정 ==========
-DATA_DIR = "/home/jiyoon/3차/BSS-Keyphrase-Extraction-master/data_JOC"
+DATA_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/data_JOC"
 DOCUMENT = "C-42.txt"
 
 # FDR 관련 설정
@@ -51,7 +51,7 @@ EXCLUDE_SUBSUMED = True
 
 # 결과 저장 설정
 SAVE_RESULTS = True
-OUTPUT_DIR = "/home/jiyoon/3차/BSS-Keyphrase-Extraction-master/results"
+OUTPUT_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/results"
 SAVE_FORMAT = ['csv', 'txt', 'json']
 
 import random

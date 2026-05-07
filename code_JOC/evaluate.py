@@ -21,7 +21,7 @@ from datetime import datetime
 
 # ========== 설정 ==========
 # 정답 파일 경로 (사용자 환경에 맞게 수정)
-DATA_DIR = "/home/jiyoon/3차/BSS-Keyphrase-Extraction-master/data_JOC"
+DATA_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/data_JOC"
 AUTHOR_TRUTH_DIR = os.path.join(DATA_DIR, "pre_process_author_truth")
 READER_TRUTH_DIR = os.path.join(DATA_DIR, "pre_process_reader_truth")
 

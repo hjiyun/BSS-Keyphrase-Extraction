@@ -14,7 +14,7 @@ from scipy.stats import invgamma
 from collections import Counter
 
 # ========== 설정 ==========
-DATA_DIR = "/home/jiyoon/3차/BSS-Keyphrase-Extraction-master/data_JOC"
+DATA_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/data_JOC"
 PREPROCESS_DIR = os.path.join(DATA_DIR, "pre_process")
 TRUTH_DIR = os.path.join(DATA_DIR, "pre_process_reader_truth")
 

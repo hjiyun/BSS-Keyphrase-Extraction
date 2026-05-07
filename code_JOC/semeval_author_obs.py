@@ -11,8 +11,13 @@ from scipy.linalg import solve
 import os
 import re
 import sys
-from keyphrase_functions import (
-    inv_logit, posterior_gibbstheta, base_to_start, 
+
+_ORIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "original")
+if _ORIG_DIR not in sys.path:
+    sys.path.insert(0, _ORIG_DIR)
+
+from keyphrase_functions_v2 import (
+    inv_logit, posterior_gibbstheta, base_to_start,
     gibbs_mh, force_obs_to_key, force_obs_to_key2,
     alpha_find, alpha_lk, FDR_calculate, vec_FDR_cal,
     precision_recall_auc, create_fcm
@@ -25,9 +30,10 @@ else:
     i = 1
 
 # File paths (adjust as needed)
-preprocess_dir = "/users/guanshenw/scratch/keyphrase/2010_train/pre_process"
-author_truth_dir = "/users/guanshenw/scratch/keyphrase/2010_train/pre_process_author_truth"
-reader_truth_dir = "/users/guanshenw/scratch/keyphrase/2010_train/pre_process_reader_truth"
+DATA_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/data_JOC"
+preprocess_dir = os.path.join(DATA_DIR, "pre_process")
+author_truth_dir = os.path.join(DATA_DIR, "pre_process_author_truth")
+reader_truth_dir = os.path.join(DATA_DIR, "pre_process_reader_truth")
 
 file_list = os.listdir(preprocess_dir) if os.path.exists(preprocess_dir) else []
 author_key_list = os.listdir(author_truth_dir) if os.path.exists(author_truth_dir) else []

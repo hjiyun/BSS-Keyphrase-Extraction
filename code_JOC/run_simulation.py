@@ -10,13 +10,23 @@ keyphrase_functions.py의 함수들을 import하여 사용
 
 import numpy as np
 import os
+import sys
 import time
 from datetime import timedelta
+
+_ORIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "original")
+if _ORIG_DIR not in sys.path:
+    sys.path.insert(0, _ORIG_DIR)
+
+import keyphrase_functions
+DATA_DIR = "/home/jiyoon/BSS-Keyphrase-Extraction/data_JOC"
+keyphrase_functions.DATA_DIR = DATA_DIR
+keyphrase_functions.PREPROCESS_DIR = os.path.join(DATA_DIR, "pre_process")
+keyphrase_functions.TRUTH_DIR = os.path.join(DATA_DIR, "pre_process_reader_truth")
 
 from keyphrase_functions import (
     create_graph, semi_keyphrase, FDR_LEVELS,
     grid, inv_logit, force_obs_to_key, force_obs_to_key2,
-    DATA_DIR,
 )
 
 # ========== 시뮬레이션 설정 ==========

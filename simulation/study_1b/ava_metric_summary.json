@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "seed": 0,
+    "n": 400,
+    "T": 5000,
+    "BURN_IN": 500,
+    "NUM_CHAINS": 3,
+    "BATCH_SIZE": 100,
+    "AWSGLD_M_REGIONS": 1000,
+    "bad_init": "theta^(0) = mu_N = -1.0 (모든 노드)",
+    "escape_window": 0.5
+  },
+  "groups": {
+    "S": 80,
+    "W": 80,
+    "N": 240
+  },
+  "mu_map": {
+    "S": 2.5,
+    "W": 1.0,
+    "N": -0.8
+  },
+  "recovery": {
+    "acMH": {
+      "mse_all": 2.281907599495443,
+      "spearman": 0.026249789061181632,
+      "mse_S": 2.626091029871616,
+      "mean_theta_hat_S": 0.8966605252580919,
+      "mean_theta_star_S": 2.4805166376147327,
+      "mse_W": 0.10485158724354346,
+      "mean_theta_hat_W": 0.8972827121303126,
+      "mean_theta_star_W": 0.9530257890868494,
+      "mse_N": 2.8928651267873513,
+      "mean_theta_hat_N": 0.8818344998639305,
+      "mean_theta_star_N": -0.7929893887277351
+    },
+    "AWSGLD": {
+      "mse_all": 1.3815293955428154,
+      "spearman": 0.6974334839592747,
+      "mse_S": 1.1102781892708993,
+      "mean_theta_hat_S": 1.5093126092473768,
+      "mean_theta_star_S": 2.4805166376147327,
+      "mse_W": 0.506969887339653,
+      "mean_theta_hat_W": 1.571100397814123,
+      "mean_theta_star_W": 0.9530257890868494,
+      "mse_N": 1.7634663003678417,
+      "mean_theta_hat_N": 0.48344684801928867,
+      "mean_theta_star_N": -0.7929893887277351
+    }
+  },
+  "mode_visit": {
+    "acMH": {
+      "S": 0,
+      "W": 1590376,
+      "N": 361,
+      "other": 209263
+    },
+    "AWSGLD": {
+      "S": 168851,
+      "W": 775839,
+      "N": 112884,
+      "other": 742426
+    }
+  },
+  "wall_time_sec": {
+    "acMH": [
+      170.84664584696293,
+      153.12858555698767,
+      163.27198999898974
+    ],
+    "AWSGLD": [
+      3.030328775057569,
+      3.007953259977512,
+      2.9743028649827465
+    ]
+  },
+  "R_hat": {
+    "acMH": {
+      "R_hat_median": 1.1159018492989201,
+      "R_hat_max": 1.776882620755711,
+      "R_hat_q90": 1.3607537351360788
+    },
+    "AWSGLD": {
+      "R_hat_median": 1.0175801276530445,
+      "R_hat_max": 1.148973187872996,
+      "R_hat_q90": 1.0600719459765147
+    }
+  },
+  "escape_summary": {
+    "acMH": {
+      "S": {
+        "n_escaped": 0,
+        "n_total": 80,
+        "median_step": null
+      },
+      "W": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 638.0
+      },
+      "N": {
+        "n_escaped": 240,
+        "n_total": 240,
+        "median_step": 0.0
+      }
+    },
+    "AWSGLD": {
+      "S": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 17.0
+      },
+      "W": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 2.0
+      },
+      "N": {
+        "n_escaped": 238,
+        "n_total": 240,
+        "median_step": 0.0
+      }
+    }
+  }
+}

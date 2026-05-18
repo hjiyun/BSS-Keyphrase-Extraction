@@ -42,7 +42,9 @@ from keyphrase_functions import (  # noqa: E402
     alpha_find,
     gibbs_mh,
 )
-from keyphrase_functions_awsgld_minibatch_0504 import (  # noqa: E402
+# 이전 파일명: keyphrase_functions_awsgld_minibatch_0504 → 현재는
+# keyphrase_functions_awsgld 로 통합됨 (gibbs_mh 가 batch_size 인자 받음).
+from keyphrase_functions_awsgld import (  # noqa: E402
     gibbs_mh as gibbs_mh_awsgld_mb,
 )
 

@@ -1,0 +1,175 @@
+{
+  "settings": {
+    "seed": 0,
+    "n": 400,
+    "T": 5000,
+    "BURN_IN": 500,
+    "NUM_CHAINS": 3,
+    "BATCH_SIZE": 100,
+    "SGLD_TAU": 1.0,
+    "SGLD_LR_BASE": 0.02,
+    "QSGLD_LR_BASE": 0.3,
+    "CYCSGLD_LR_BASE": 0.01,
+    "CYCSGLD_CYCLES": 10,
+    "bad_init": "theta^(0) = mu_N (모든 노드, chain 0)",
+    "escape_window": 0.5
+  },
+  "groups": {
+    "S": 80,
+    "W": 80,
+    "N": 240
+  },
+  "mu_map": {
+    "S": 2.5,
+    "W": 1.0,
+    "N": -0.8
+  },
+  "recovery": {
+    "SGLD": {
+      "mse_all": 2.6200080907524366,
+      "spearman": 0.16618378864867905,
+      "mse_S": 10.01846338471111,
+      "mean_theta_hat_S": -0.611388247561127,
+      "mean_theta_star_S": 2.4805166376147327,
+      "mse_W": 2.007088090210036,
+      "mean_theta_hat_W": -0.3532543014099866,
+      "mean_theta_star_W": 0.9530257890868494,
+      "mse_N": 0.358162992947012,
+      "mean_theta_hat_N": -0.7351300139306602,
+      "mean_theta_star_N": -0.7929893887277351
+    },
+    "qSGLD": {
+      "mse_all": 2.0676109895719477,
+      "spearman": 0.6480312376952355,
+      "mse_S": 0.802556288574969,
+      "mean_theta_hat_S": 1.7576312560013079,
+      "mean_theta_star_S": 2.4805166376147327,
+      "mse_W": 0.9274861560601046,
+      "mean_theta_hat_W": 1.8002586457813394,
+      "mean_theta_star_W": 0.9530257890868494,
+      "mse_N": 2.8693375010748885,
+      "mean_theta_hat_N": 0.8457017116215771,
+      "mean_theta_star_N": -0.7929893887277351
+    },
+    "cycSGLD": {
+      "mse_all": 1.2721583024828447,
+      "spearman": 0.6922127013293833,
+      "mse_S": 3.1182624399092944,
+      "mean_theta_hat_S": 0.7441360437875926,
+      "mean_theta_star_S": 2.4805166376147327,
+      "mse_W": 0.09894867348893982,
+      "mean_theta_hat_W": 0.8279808568833797,
+      "mean_theta_star_W": 0.9530257890868494,
+      "mse_N": 1.0478601330053299,
+      "mean_theta_hat_N": 0.1873076107888418,
+      "mean_theta_star_N": -0.7929893887277351
+    }
+  },
+  "mode_visit": {
+    "SGLD": {
+      "S": 46,
+      "W": 91513,
+      "N": 890997,
+      "other": 817444
+    },
+    "qSGLD": {
+      "S": 305942,
+      "W": 649927,
+      "N": 121085,
+      "other": 723046
+    },
+    "cycSGLD": {
+      "S": 206,
+      "W": 731860,
+      "N": 103426,
+      "other": 964508
+    }
+  },
+  "wall_time_sec": {
+    "SGLD": [
+      2.387042189016938,
+      2.368903248105198,
+      2.416769649949856
+    ],
+    "qSGLD": [
+      2.5566297479672357,
+      2.5605799299664795,
+      2.566971317050047
+    ],
+    "cycSGLD": [
+      2.3961977229919285,
+      2.4349218879360706,
+      2.388465494965203
+    ]
+  },
+  "R_hat": {
+    "SGLD": {
+      "R_hat_median": 3.921727274332694,
+      "R_hat_max": 10.210522686469895,
+      "R_hat_q90": 5.636626988939286
+    },
+    "qSGLD": {
+      "R_hat_median": 1.0489344579468987,
+      "R_hat_max": 1.3721179531236642,
+      "R_hat_q90": 1.1535529693667426
+    },
+    "cycSGLD": {
+      "R_hat_median": 3.8594695486983923,
+      "R_hat_max": 5.088843089857716,
+      "R_hat_q90": 4.533431981564675
+    }
+  },
+  "escape_summary": {
+    "SGLD": {
+      "S": {
+        "n_escaped": 0,
+        "n_total": 80,
+        "median_step": null
+      },
+      "W": {
+        "n_escaped": 42,
+        "n_total": 80,
+        "median_step": 1918.0
+      },
+      "N": {
+        "n_escaped": 240,
+        "n_total": 240,
+        "median_step": 0.0
+      }
+    },
+    "qSGLD": {
+      "S": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 29.0
+      },
+      "W": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 2.0
+      },
+      "N": {
+        "n_escaped": 239,
+        "n_total": 240,
+        "median_step": 0.0
+      }
+    },
+    "cycSGLD": {
+      "S": {
+        "n_escaped": 4,
+        "n_total": 80,
+        "median_step": 2483.5
+      },
+      "W": {
+        "n_escaped": 80,
+        "n_total": 80,
+        "median_step": 969.0
+      },
+      "N": {
+        "n_escaped": 240,
+        "n_total": 240,
+        "median_step": 0.0
+      }
+    }
+  }
+}

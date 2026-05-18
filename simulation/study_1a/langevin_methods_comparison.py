@@ -1,5 +1,5 @@
 """
-SGLD/qSGLD/cycSGLD on Moderate, Difficult, Sparse scenarios (R=1 each).
+SGLD/qSGLD/cycSGLD/acMH/AWSGLD on Easy, Moderate, Difficult, Sparse scenarios.
 
 Mirrors AWSGLD-vs-acMH v2 scenario parameters one-to-one
 (see awsgld_acmh_theta_recovery_simulation_0422_v2_*.py).
@@ -62,15 +62,22 @@ except ModuleNotFoundError:
         return SimpleNamespace(statistic=float(value))
 
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Script lives in simulation/study_1a/, so the project root is two levels up.
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CODE_DIR = os.path.join(PROJECT_ROOT, "code_JOC")
 ORIG_DIR = os.path.join(CODE_DIR, "original")
 for _p in (CODE_DIR, ORIG_DIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-# AWSGLD sampler with preconditioning + sigma2 floor (full-batch).
-from keyphrase_functions_awsgld_0422 import gibbs_mh as gibbs_mh_awsgld  # noqa: E402
+# AWSGLD sampler with preconditioning + sigma2 floor.
+# Likelihood gradient 는 BATCH_SIZE 인자에 따라 minibatch (BATCH_SIZE<n) 또는
+# full-batch (BATCH_SIZE=None 또는 BATCH_SIZE>=n) 로 계산되고,
+# prior gradient(B^T B) 와 sigma^2 Gibbs 업데이트는 항상 full-batch.
+# 이전 파일명: keyphrase_functions_awsgld_0422 → 현재는 keyphrase_functions_awsgld 로 통합됨.
+from keyphrase_functions_awsgld import gibbs_mh as gibbs_mh_awsgld  # noqa: E402
+# acMH (within-Gibbs) baseline from the original BSS implementation.
+from keyphrase_functions import gibbs_mh as gibbs_mh_acmh  # noqa: E402
 
 
 # ---------------------------------------------------------------------
@@ -498,6 +505,23 @@ def run_sgld_variant(method, graph, Y, theta_star, pi_star, init_state):
     return summarize_estimates(method, theta_star, pi_star, theta_hat, pi_hat, alpha_hat, Y, wall_time_sec)
 
 
+def run_acmh_variant(graph, Y, theta_star, pi_star, init_state):
+    """acMH (Metropolis-Hastings within Gibbs) baseline from original BSS code."""
+    t0 = time.perf_counter()
+    res = gibbs_mh_acmh(
+        Burn_in=BURN_IN, T=T, ini=init_state["ini"], n=graph["n"], graph=graph,
+        Y=Y, B=init_state["B"], u_0=init_state["u_0"],
+        alpha_est=init_state["alpha_est"], grid=GRID, verbose=False,
+    )
+    wall_time_sec = time.perf_counter() - t0
+    theta_hat = np.mean(res["theta_store"][BURN_IN:, :], axis=0)
+    alpha_hat = float(res["alpha_mn"])
+    pi_hat = (1.0 - alpha_hat) * inv_logit(theta_hat)
+    pi_hat = np.clip(pi_hat, 1e-10, 1 - 1e-10)
+    return summarize_estimates("acMH", theta_star, pi_star, theta_hat, pi_hat,
+                               alpha_hat, Y, wall_time_sec)
+
+
 def run_awsgld_variant(graph, Y, theta_star, pi_star, init_state):
     """AWSGLD with preconditioning + sigma2 floor + minibatch (from awsgld_0422)."""
     t0 = time.perf_counter()
@@ -569,7 +593,13 @@ def plot_method_summary(method_summaries, out_path):
         ("spearman", "Spearman", (0, 1)),
         ("ndcg_at_k", "NDCG@k", (0, 1)),
     ]
-    colors = {"SGLD": "#2F6DB2", "qSGLD": "#D85A30", "cycSGLD": "#4E9A51", "AWSGLD": "#9B59B6"}
+    colors = {
+        "SGLD": "#2F6DB2",
+        "qSGLD": "#D85A30",
+        "cycSGLD": "#4E9A51",
+        "acMH": "#E1B12C",
+        "AWSGLD": "#9B59B6",
+    }
 
     fig, axes = plt.subplots(2, 2, figsize=(10, 8))
     fig.subplots_adjust(hspace=0.35, wspace=0.28, top=0.92, bottom=0.08)
@@ -611,7 +641,7 @@ def main():
     out_dir = os.path.dirname(os.path.abspath(__file__))
     combined_json_path = os.path.join(out_dir, "langevin_methods_comparison_summary.json")
 
-    methods = ["SGLD", "qSGLD", "cycSGLD", "AWSGLD"]
+    methods = ["SGLD", "qSGLD", "cycSGLD", "acMH", "AWSGLD"]
     combined_payload = {
         "settings_common": {
             "R": R, "T": T, "BURN_IN": BURN_IN, "damping": DAMPING,
@@ -632,7 +662,7 @@ def main():
         scen_name = DEFAULT_SCENARIO["name"]
 
         print("=" * 72)
-        print(f"SGLD/qSGLD/cycSGLD/AWSGLD on {scen_name}")
+        print(f"SGLD/qSGLD/cycSGLD/acMH/AWSGLD on {scen_name}")
         print(f"R={R}, T={T}, Burn-in={BURN_IN}, n={DEFAULT_SCENARIO['n_total']}")
         print("=" * 72)
 
@@ -649,6 +679,8 @@ def main():
             for method in methods:
                 if method == "AWSGLD":
                     result = run_awsgld_variant(graph, Y, theta_star, pi_star, init_state)
+                elif method == "acMH":
+                    result = run_acmh_variant(graph, Y, theta_star, pi_star, init_state)
                 else:
                     result = run_sgld_variant(method, graph, Y, theta_star, pi_star, init_state)
                 results_by_method[method].append(result)

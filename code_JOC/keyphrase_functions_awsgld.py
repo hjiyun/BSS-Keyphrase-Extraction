@@ -310,7 +310,7 @@ def create_graph(article_name):
 
 # ========== MCMC (theta update: AWSGLD, sigma2 update: Gibbs) ==========
 def gibbs_mh(Burn_in, T, ini, n, graph, Y, B, u_0, alpha_est, grid,
-             batch_size=None, verbose=True):
+             batch_size=None, sigma2_floor=0.5, verbose=True):
     """
     AWSGLD sampler with preconditioning + σ² floor + optional minibatch likelihood.
 
@@ -318,6 +318,7 @@ def gibbs_mh(Burn_in, T, ini, n, graph, Y, B, u_0, alpha_est, grid,
     batch_size=k    → randomly sample k node likelihoods per step
                       (unbiased via n/k scaling). Prior gradient is always full
                       because B^T B is graph-coupled.
+    sigma2_floor    → σ² 하한값 (기본 0.5). 높이면 prior 영향 약해져 likelihood 우세.
     """
     theta_store = np.zeros((T, n))
     sigma2_store = np.zeros(T)
@@ -349,7 +350,7 @@ def gibbs_mh(Burn_in, T, ini, n, graph, Y, B, u_0, alpha_est, grid,
     for t in range(T):
         C = (B @ (theta - u_0)).T @ (B @ (theta - u_0))
         sigma2 = invgamma.rvs(n / 2 + 0.001, scale=C / 2 + 0.001)
-        sigma2 = max(sigma2, 0.5)  # floor to prevent prior-gradient blowup in Langevin
+        sigma2 = max(sigma2, sigma2_floor)  # floor to prevent prior-gradient blowup in Langevin
         sigma2_store[t] = sigma2
         C_store[t] = C
 

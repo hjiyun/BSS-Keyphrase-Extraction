@@ -84,11 +84,18 @@ CYCSGLD_LR_BASE = 0.01
 CYCSGLD_CYCLES = 10
 SIGMA2_FLOOR = 0.5
 
+# SGHMC (Chen et al. 2014) — momentum + friction to offset minibatch noise.
+# eta = eps^2 (decayed lr), friction = eps*C (momentum decay), B_hat=0.
+SGHMC_LR_BASE = 0.01
+SGHMC_FRICTION = 0.1
+SGHMC_TAU = 1.0
+
 # CLAUDE.md 색상 규칙
 C_S, C_W, C_N = "#2F6DB2", "#D85A30", "#6B6B6B"
 GROUP_COLOR = {"S": C_S, "W": C_W, "N": C_N}
-METHOD_COLOR = {"SGLD": "#2F6DB2", "qSGLD": "#D85A30", "cycSGLD": "#4E9A51"}
-METHODS = ("SGLD", "qSGLD", "cycSGLD")
+METHOD_COLOR = {"SGLD": "#2F6DB2", "qSGLD": "#D85A30", "cycSGLD": "#4E9A51",
+                "SGHMC": "#16A085"}
+METHODS = ("SGLD", "qSGLD", "cycSGLD", "SGHMC")
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -214,6 +221,56 @@ def run_sgld_variant(method, data, ini):
     }
 
 
+def run_sghmc_variant(data, ini):
+    """
+    SGHMC (Chen et al. 2014) — run_sgld_variant 와 동일한 energy/gradient,
+    sigma2-Gibbs 파이프라인을 쓰되 theta 업데이트가 보조 운동량 v 와
+    마찰항(friction)을 가진다.
+
+    이산화 업데이트 (mass M=I, B_hat=0):
+        theta_{t+1} = theta_t + v_t
+        v_{t+1}     = (1 - alpha) v_t - eta * grad_U(theta_t) + N(0, 2 alpha eta tau)
+    eta = eps^2 (decayed lr), alpha = eps*C (friction).
+    """
+    t0 = time.perf_counter()
+    n = data["n"]
+    B, u_0, Y = data["B"], data["u_0"], data["Y"]
+    theta = ini.copy()
+    alpha_est = alpha_find(theta, Y, GRID)
+    theta_store = np.zeros((T, n))
+    alpha_store = np.zeros(T)
+    BtB = B.T @ B
+    v = np.zeros(n)
+
+    for t in range(T):
+        Bv = B @ (theta - u_0)
+        C = Bv @ Bv
+        sigma2 = invgamma.rvs(n / 2 + 0.001, scale=C / 2 + 0.001)
+        sigma2 = max(sigma2, SIGMA2_FLOOR)
+        if BATCH_SIZE is None or BATCH_SIZE >= n:
+            batch_idx = None
+        else:
+            batch_idx = np.random.choice(n, size=BATCH_SIZE, replace=False)
+        grad_U = grad_posterior_energy_fixed_btb(
+            Y, alpha_est, theta, u_0, sigma2, BtB, batch_idx=batch_idx,
+        )
+        eta_k = SGHMC_LR_BASE / ((t + 1) ** 0.6 + 10.0)
+        theta = theta + v
+        v = ((1.0 - SGHMC_FRICTION) * v
+             - eta_k * grad_U
+             + np.sqrt(2.0 * SGHMC_FRICTION * eta_k * SGHMC_TAU) * np.random.randn(n))
+        theta = np.clip(theta, -700, 700)
+        theta_store[t, :] = theta
+        alpha_est = alpha_find(theta, Y, GRID)
+        alpha_store[t] = alpha_est
+
+    return {
+        "theta_store": theta_store,
+        "alpha_mn": float(np.mean(alpha_store[BURN_IN:])),
+        "wall_time": time.perf_counter() - t0,
+    }
+
+
 # ──────────────────────────────────────────────────────────────────────────
 # Inits (acmh_vs_awsgld.py 와 동일)
 # ──────────────────────────────────────────────────────────────────────────
@@ -293,7 +350,8 @@ def gelman_rubin(chains_theta_post):
 def plot_recovery(data, theta_hat_by_method, out_path):
     z = data["z"]
     theta_star = data["theta_star"]
-    fig, axes = plt.subplots(2, 3, figsize=(17, 10))
+    ncols = max(3, len(METHODS))
+    fig, axes = plt.subplots(2, ncols, figsize=(5.7 * ncols, 10))
 
     # row 0: parity per method
     for col, method in enumerate(METHODS):
@@ -317,13 +375,14 @@ def plot_recovery(data, theta_hat_by_method, out_path):
     mu_map = {"S": PARAMS["mu_S"], "W": PARAMS["mu_W"], "N": PARAMS["mu_N"]}
     groups = ("S", "W", "N")
     x = np.arange(len(groups))
-    width = 0.26
+    width = 0.8 / len(METHODS)
+    offset = (len(METHODS) - 1) / 2.0
 
     ax = axes[1, 0]
     for i, method in enumerate(METHODS):
         mses = [np.mean((theta_hat_by_method[method][z == g] - theta_star[z == g]) ** 2)
                 for g in groups]
-        ax.bar(x + (i - 1) * width, mses, width,
+        ax.bar(x + (i - offset) * width, mses, width,
                color=METHOD_COLOR[method], alpha=0.85, label=method)
     ax.set_xticks(x); ax.set_xticklabels(groups)
     ax.set_ylabel("Group MSE")
@@ -333,7 +392,7 @@ def plot_recovery(data, theta_hat_by_method, out_path):
     ax = axes[1, 1]
     for i, method in enumerate(METHODS):
         means = [theta_hat_by_method[method][z == g].mean() for g in groups]
-        ax.bar(x + (i - 1) * width, means, width,
+        ax.bar(x + (i - offset) * width, means, width,
                color=METHOD_COLOR[method], alpha=0.85, label=method)
     for j, g in enumerate(groups):
         ax.hlines(mu_map[g], j - 0.5, j + 0.5, colors=GROUP_COLOR[g],
@@ -344,7 +403,8 @@ def plot_recovery(data, theta_hat_by_method, out_path):
     ax.set_title(r"mean($\hat\theta_g$) vs $\mu_g$", fontweight="bold", fontsize=11)
     ax.grid(True, alpha=0.15, axis="y"); ax.legend(fontsize=8)
 
-    axes[1, 2].axis("off")
+    for col in range(2, ncols):
+        axes[1, col].axis("off")
 
     fig.suptitle(
         f"Study 1B — SGLD-family recovery (seed={data['seed']}, n={data['n']}, "
@@ -385,12 +445,13 @@ def plot_mode_visit(visit_by_method, out_path):
     fig, ax = plt.subplots(figsize=(9, 5))
     cats = ("S", "W", "N", "other")
     x = np.arange(len(cats))
-    width = 0.26
+    width = 0.8 / len(METHODS)
+    offset = (len(METHODS) - 1) / 2.0
     for i, method in enumerate(METHODS):
         vals = [visit_by_method[method][c] for c in cats]
         total = sum(vals)
         frac = [v / total for v in vals] if total > 0 else vals
-        ax.bar(x + (i - 1) * width, frac, width,
+        ax.bar(x + (i - offset) * width, frac, width,
                color=METHOD_COLOR[method], alpha=0.85, label=method)
     ax.set_xticks(x); ax.set_xticklabels(cats)
     ax.set_ylabel("fraction of post-burn samples in basin")
@@ -431,7 +492,10 @@ def main(seed=0):
             np.random.seed(seed * 1000 + c_idx)
             print(f"  chain {c_idx}: init mean={ini.mean():+.3f} "
                   f"std={ini.std():.3f}", flush=True)
-            res = run_sgld_variant(method, data, ini)
+            if method == "SGHMC":
+                res = run_sghmc_variant(data, ini)
+            else:
+                res = run_sgld_variant(method, data, ini)
             all_chains[method].append(res["theta_store"])
             wall_times[method].append(res["wall_time"])
             print(f"    -> wall {res['wall_time']:.1f}s")

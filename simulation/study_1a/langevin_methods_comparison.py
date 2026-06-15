@@ -96,6 +96,12 @@ SGLD_LR_BASE = 0.02
 QSGLD_LR_BASE = 0.3
 CYCSGLD_LR_BASE = 0.01
 CYCSGLD_CYCLES = 10
+# SGHMC (Chen et al. 2014) — auxiliary momentum + friction to offset the
+# minibatch-gradient noise. eta = eps^2 (learning rate, decayed like SGLD),
+# friction = eps*C (momentum decay), B_hat=0 so the friction dominates the noise.
+SGHMC_LR_BASE = 0.01
+SGHMC_FRICTION = 0.1
+SGHMC_TAU = 1.0
 # Minibatch size for likelihood gradient. None = full batch.
 BATCH_SIZE = 100
 
@@ -505,6 +511,65 @@ def run_sgld_variant(method, graph, Y, theta_star, pi_star, init_state):
     return summarize_estimates(method, theta_star, pi_star, theta_hat, pi_hat, alpha_hat, Y, wall_time_sec)
 
 
+def run_sghmc_variant(graph, Y, theta_star, pi_star, init_state):
+    """
+    SGHMC (Chen et al. 2014) arm.
+
+    Same energy/gradient and the same sigma2-Gibbs pipeline as
+    run_sgld_variant, but the theta update carries an auxiliary momentum v
+    with a friction term that offsets the minibatch-gradient noise.
+
+    Discretized update (mass M=I, B_hat=0):
+        theta_{t+1} = theta_t + v_t
+        v_{t+1}     = (1 - alpha) v_t - eta * grad_U(theta_t) + N(0, 2 alpha eta tau)
+    with eta = eps^2 (decayed learning rate) and alpha = eps*C (friction).
+    """
+    t0 = time.perf_counter()
+    n = graph["n"]
+    B = init_state["B"]
+    u_0 = init_state["u_0"]
+    theta = init_state["ini"].copy()
+    alpha_est = init_state["alpha_est"]
+    theta_store = np.zeros((T, n))
+    alpha_store = np.zeros(T)
+    sigma2_floor = 0.5
+    BtB = B.T @ B
+    v = np.zeros(n)  # auxiliary velocity v = eps M^{-1} r, r initialised at 0
+
+    for t in range(T):
+        Bv = B @ (theta - u_0)
+        C = Bv @ Bv
+        sigma2 = invgamma.rvs(n / 2 + 0.001, scale=C / 2 + 0.001)
+        sigma2 = max(sigma2, sigma2_floor)
+        if BATCH_SIZE is None or BATCH_SIZE >= n:
+            batch_idx = None
+        else:
+            batch_idx = np.random.choice(n, size=BATCH_SIZE, replace=False)
+        grad_U = grad_posterior_energy_fixed_btb(
+            Y, alpha_est, theta, u_0, B, sigma2, BtB, batch_idx=batch_idx
+        )
+        eta_k = SGHMC_LR_BASE / ((t + 1) ** 0.6 + 10.0)
+        theta = theta + v
+        v = (
+            (1.0 - SGHMC_FRICTION) * v
+            - eta_k * grad_U
+            + np.sqrt(2.0 * SGHMC_FRICTION * eta_k * SGHMC_TAU) * np.random.randn(n)
+        )
+        theta = np.clip(theta, -700, 700)
+        theta_store[t, :] = theta
+        alpha_est = alpha_find(theta, Y, GRID)
+        alpha_store[t] = alpha_est
+
+    result = _sgld_result(theta_store, alpha_store)
+    wall_time_sec = time.perf_counter() - t0
+    theta_hat = np.mean(result["theta_store"][BURN_IN:, :], axis=0)
+    alpha_hat = float(result["alpha_mn"])
+    pi_hat = (1.0 - alpha_hat) * inv_logit(theta_hat)
+    pi_hat = np.clip(pi_hat, 1e-10, 1 - 1e-10)
+    return summarize_estimates("SGHMC", theta_star, pi_star, theta_hat, pi_hat,
+                               alpha_hat, Y, wall_time_sec)
+
+
 def run_acmh_variant(graph, Y, theta_star, pi_star, init_state):
     """acMH (Metropolis-Hastings within Gibbs) baseline from original BSS code."""
     t0 = time.perf_counter()
@@ -597,6 +662,7 @@ def plot_method_summary(method_summaries, out_path):
         "SGLD": "#2F6DB2",
         "qSGLD": "#D85A30",
         "cycSGLD": "#4E9A51",
+        "SGHMC": "#16A085",
         "acMH": "#E1B12C",
         "AWSGLD": "#9B59B6",
     }
@@ -641,7 +707,7 @@ def main():
     out_dir = os.path.dirname(os.path.abspath(__file__))
     combined_json_path = os.path.join(out_dir, "langevin_methods_comparison_summary.json")
 
-    methods = ["SGLD", "qSGLD", "cycSGLD", "acMH", "AWSGLD"]
+    methods = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "acMH", "AWSGLD"]
     combined_payload = {
         "settings_common": {
             "R": R, "T": T, "BURN_IN": BURN_IN, "damping": DAMPING,
@@ -651,6 +717,9 @@ def main():
             "qsgld_lr_base": QSGLD_LR_BASE,
             "cycsgld_lr_base": CYCSGLD_LR_BASE,
             "cycsgld_cycles": CYCSGLD_CYCLES,
+            "sghmc_lr_base": SGHMC_LR_BASE,
+            "sghmc_friction": SGHMC_FRICTION,
+            "sghmc_tau": SGHMC_TAU,
             "batch_size": BATCH_SIZE,
         },
         "scenarios": {},
@@ -681,6 +750,8 @@ def main():
                     result = run_awsgld_variant(graph, Y, theta_star, pi_star, init_state)
                 elif method == "acMH":
                     result = run_acmh_variant(graph, Y, theta_star, pi_star, init_state)
+                elif method == "SGHMC":
+                    result = run_sghmc_variant(graph, Y, theta_star, pi_star, init_state)
                 else:
                     result = run_sgld_variant(method, graph, Y, theta_star, pi_star, init_state)
                 results_by_method[method].append(result)

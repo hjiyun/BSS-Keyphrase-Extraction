@@ -47,6 +47,14 @@ BURN_IN = 1000
 SEED = 20260507
 BATCH_SIZE = 100
 
+# SGHMC (Chen et al. 2014) — momentum + friction overlay arm for the same
+# energy/gradient and sigma2-Gibbs pipeline as AWSGLD.
+SGHMC_LR_BASE = 0.01
+SGHMC_FRICTION = 0.1
+SGHMC_TAU = 1.0
+SGHMC_SIGMA2_FLOOR = 0.5
+SGHMC_COLOR = "#16A085"
+
 # Each entry mirrors study_1a one-to-one (scenario params + block_probs).
 SCENARIOS = {
     "easy": {
@@ -218,6 +226,61 @@ def run_awsgld_with_traces(graph, Y, init_state):
 
 
 # ---------------------------------------------------------------------
+# SGHMC sampler with traces (same energy/gradient as AWSGLD module).
+# ---------------------------------------------------------------------
+def run_sghmc_with_traces(graph, Y, init_state):
+    """
+    SGHMC (Chen et al. 2014) on the same posterior as AWSGLD: auxiliary
+    momentum v with a friction term that offsets the minibatch-gradient noise.
+
+    이산화 (mass M=I, B_hat=0):
+        theta_{t+1} = theta_t + v_t
+        v_{t+1}     = (1 - alpha) v_t - eta * grad_U(theta_t) + N(0, 2 alpha eta tau)
+    Returns the same trace structure as run_awsgld_with_traces so it can be
+    overlaid on the convergence panels.
+    """
+    np.random.seed(SEED)
+    n = graph["n"]
+    B = init_state["B"]
+    u_0 = init_state["u_0"]
+    theta = init_state["ini"].copy()
+    alpha_est = init_state["alpha_est"]
+    BtB = B.T @ B
+    theta_store = np.zeros((T, n))
+    sigma2_store = np.zeros(T)
+    alpha_store = np.zeros(T)
+    v = np.zeros(n)
+
+    for t in range(T):
+        Bv = B @ (theta - u_0)
+        C = Bv @ Bv
+        # Inverse-gamma Gibbs draw for sigma2 (matches AWSGLD module shape/scale).
+        sigma2 = 1.0 / np.random.gamma(n / 2 + 0.001, 1.0 / (C / 2 + 0.001))
+        sigma2 = max(sigma2, SGHMC_SIGMA2_FLOOR)
+        batch_idx = (np.random.choice(n, size=BATCH_SIZE, replace=False)
+                     if BATCH_SIZE is not None and BATCH_SIZE < n else None)
+        grad_U = kfa.grad_posterior_energy(
+            Y, alpha_est, theta, u_0, B, sigma2, batch_idx=batch_idx, BtB=BtB
+        )
+        eta_k = SGHMC_LR_BASE / ((t + 1) ** 0.6 + 10.0)
+        theta = theta + v
+        v = ((1.0 - SGHMC_FRICTION) * v
+             - eta_k * grad_U
+             + np.sqrt(2.0 * SGHMC_FRICTION * eta_k * SGHMC_TAU) * np.random.randn(n))
+        theta = np.clip(theta, -700, 700)
+        theta_store[t] = theta
+        sigma2_store[t] = sigma2
+        alpha_est = alpha_find(theta, Y, GRID)
+        alpha_store[t] = alpha_est
+
+    return {
+        "theta_store": theta_store,
+        "sigma2_store": sigma2_store,
+        "alpha_store": alpha_store,
+    }
+
+
+# ---------------------------------------------------------------------
 # Plotting.
 # ---------------------------------------------------------------------
 def pick_representative_components(group, rng, per_group=3):
@@ -236,11 +299,13 @@ def running_mean(arr):
     return cum / denom
 
 
-def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenario):
+def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenario,
+                     sghmc_res=None):
     rng_plot = np.random.default_rng(SEED + 7)
     comp_idx = pick_representative_components(group, rng_plot, per_group=3)
 
     theta_aw = awsgld_res["theta_store"]
+    theta_sg = sghmc_res["theta_store"] if sghmc_res is not None else None
 
     fig, axes = plt.subplots(2, 2, figsize=(13, 9))
     fig.subplots_adjust(hspace=0.32, wspace=0.27, top=0.93, bottom=0.07,
@@ -266,10 +331,14 @@ def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenari
     theta_bar_aw = theta_aw[BURN_IN:].mean(axis=0)
     dist_aw = np.linalg.norm(theta_aw - theta_bar_aw, axis=1)
     ax.plot(iters, dist_aw, color="#9B59B6", lw=0.7, label="AWSGLD")
+    if theta_sg is not None:
+        theta_bar_sg = theta_sg[BURN_IN:].mean(axis=0)
+        dist_sg = np.linalg.norm(theta_sg - theta_bar_sg, axis=1)
+        ax.plot(iters, dist_sg, color=SGHMC_COLOR, lw=0.7, label="SGHMC")
     ax.axvline(BURN_IN, color="k", ls="--", lw=0.8, alpha=0.6)
     ax.set_xlabel("iteration k")
     ax.set_ylabel(r"$\|\theta_k - \bar\theta\|_2$")
-    ax.set_title(r"(b) AWSGLD: $\|\theta_k - \bar\theta\|_2$ trace",
+    ax.set_title(r"(b) $\|\theta_k - \bar\theta\|_2$ trace",
                  fontsize=11, fontweight="bold")
     ax.legend(fontsize=9, loc="upper right")
     ax.grid(True, alpha=0.2)
@@ -281,10 +350,16 @@ def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenari
         sigma2_store=awsgld_res["sigma2_store"],
     )
     ax.plot(iters, U_aw, color="#9B59B6", lw=0.6, alpha=0.85, label="AWSGLD")
+    if theta_sg is not None:
+        U_sg = compute_energy_trace(
+            theta_sg, Y, sghmc_res["alpha_store"], u_0, B,
+            sigma2_store=sghmc_res["sigma2_store"],
+        )
+        ax.plot(iters, U_sg, color=SGHMC_COLOR, lw=0.6, alpha=0.85, label="SGHMC")
     ax.axvline(BURN_IN, color="k", ls="--", lw=0.8, alpha=0.6)
     ax.set_xlabel("iteration k")
     ax.set_ylabel(r"$U(x_k)$")
-    ax.set_title(r"(c) AWSGLD: energy trace $U(x_k)$",
+    ax.set_title(r"(c) energy trace $U(x_k)$",
                  fontsize=11, fontweight="bold")
     ax.legend(fontsize=9, loc="upper right")
     ax.grid(True, alpha=0.2)
@@ -294,10 +369,14 @@ def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenari
     mean_aw = running_mean(theta_aw)
     mse_aw = np.mean((mean_aw - theta_star[None, :]) ** 2, axis=1)
     ax.plot(iters, mse_aw, color="#9B59B6", lw=1.0, label="AWSGLD")
+    if theta_sg is not None:
+        mean_sg = running_mean(theta_sg)
+        mse_sg = np.mean((mean_sg - theta_star[None, :]) ** 2, axis=1)
+        ax.plot(iters, mse_sg, color=SGHMC_COLOR, lw=1.0, label="SGHMC")
     ax.axvline(BURN_IN, color="k", ls="--", lw=0.8, alpha=0.6)
     ax.set_xlabel("iteration k")
     ax.set_ylabel(r"$\|\bar\theta_k - \theta^*\|^2 / n$")
-    ax.set_title(r"(d) AWSGLD: running posterior mean MSE vs $\theta^*$",
+    ax.set_title(r"(d) running posterior mean MSE vs $\theta^*$",
                  fontsize=11, fontweight="bold")
     ax.legend(fontsize=9, loc="upper right")
     ax.set_yscale("log")
@@ -340,9 +419,14 @@ def run_one_scenario(key, out_dir):
     awsgld_res = run_awsgld_with_traces(graph, Y, init_state)
     print(f"AWSGLD done in {time.perf_counter() - t0:.1f}s")
 
+    t0 = time.perf_counter()
+    sghmc_res = run_sghmc_with_traces(graph, Y, init_state)
+    print(f"SGHMC done in {time.perf_counter() - t0:.1f}s")
+
     plot_convergence(
         awsgld_res, theta_star, graph["group"],
         init_state["B"], Y, init_state["u_0"], out_path, scenario,
+        sghmc_res=sghmc_res,
     )
 
 

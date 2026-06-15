@@ -75,6 +75,10 @@ SGLD_LR_BASE = 0.02
 QSGLD_LR_BASE = 0.3
 CYCSGLD_LR_BASE = 0.01
 CYCSGLD_CYCLES = 10
+# SGHMC (Chen et al. 2014) — momentum + friction to offset minibatch noise.
+SGHMC_LR_BASE = 0.01
+SGHMC_FRICTION = 0.1
+SGHMC_TAU = 1.0
 GRID = (np.arange(10, 43) - 5) / np.arange(10, 43)
 
 SCALE_CFG = {
@@ -83,10 +87,10 @@ SCALE_CFG = {
     10000: {"T": 10000, "batch": 1000, "k_ndcg": 1000},
 }
 
-METHODS = ("SGLD", "qSGLD", "cycSGLD", "AWSGLD")
+METHODS = ("SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD")
 METHOD_COLOR = {
     "SGLD": "#2F6DB2", "qSGLD": "#D85A30",
-    "cycSGLD": "#4E9A51", "AWSGLD": "#9B59B6",
+    "cycSGLD": "#4E9A51", "SGHMC": "#16A085", "AWSGLD": "#9B59B6",
 }
 
 
@@ -171,6 +175,42 @@ def run_sgld_variant(method, data, ini, T, batch_size):
             tau_k = SGLD_TAU if cur_beta >= 0.8 else SGLD_TAU / 1e4
             theta = (theta - eps_k * grad_U
                      + np.sqrt(2.0 * tau_k * eps_k) * np.random.randn(n))
+        theta = np.clip(theta, -700, 700)
+        theta_store[t, :] = theta
+        alpha_est = alpha_find(theta, Y, GRID)
+    return {"theta_store": theta_store,
+            "wall_time": time.perf_counter() - t0}
+
+
+def run_sghmc_variant(data, ini, T, batch_size):
+    """
+    SGHMC (Chen et al. 2014) — run_sgld_variant 와 동일 energy/gradient,
+    sigma2-Gibbs 파이프라인. theta 업데이트가 보조 운동량 v + 마찰항을 가짐.
+
+    이산화 (mass M=I, B_hat=0):
+        theta_{t+1} = theta_t + v_t
+        v_{t+1}     = (1 - alpha) v_t - eta * grad_U(theta_t) + N(0, 2 alpha eta tau)
+    eta = eps^2 (decayed lr), alpha = eps*C (friction).
+    """
+    t0 = time.perf_counter()
+    n = data["n"]; B = data["B"]; u_0 = data["u_0"]; Y = data["Y"]
+    theta = ini.copy(); alpha_est = alpha_find(theta, Y, GRID)
+    theta_store = np.zeros((T, n))
+    BtB = B.T @ B
+    v = np.zeros(n)
+    for t in range(T):
+        Bv = B @ (theta - u_0); C = Bv @ Bv
+        sigma2 = invgamma.rvs(n / 2 + 0.001, scale=C / 2 + 0.001)
+        sigma2 = max(sigma2, SIGMA2_FLOOR_SGLD)
+        batch_idx = (np.random.choice(n, size=batch_size, replace=False)
+                     if batch_size < n else None)
+        grad_U = grad_post_energy(Y, alpha_est, theta, u_0, sigma2, BtB,
+                                  batch_idx=batch_idx)
+        eta_k = SGHMC_LR_BASE / ((t + 1) ** 0.6 + 10.0)
+        theta = theta + v
+        v = ((1.0 - SGHMC_FRICTION) * v
+             - eta_k * grad_U
+             + np.sqrt(2.0 * SGHMC_FRICTION * eta_k * SGHMC_TAU) * np.random.randn(n))
         theta = np.clip(theta, -700, 700)
         theta_store[t, :] = theta
         alpha_est = alpha_find(theta, Y, GRID)
@@ -353,6 +393,8 @@ def run_one_seed(n, seed, T, BURN_IN, batch, K_NDCG):
             np.random.seed(seed * 1000 + c_idx)
             if method == "AWSGLD":
                 res = run_awsgld(data, ini, T, BURN_IN, batch)
+            elif method == "SGHMC":
+                res = run_sghmc_variant(data, ini, T, batch)
             else:
                 res = run_sgld_variant(method, data, ini, T, batch)
             chains.append(res["theta_store"])
@@ -443,6 +485,9 @@ def main():
             "n": n, "seeds": seeds, "T": T, "BURN_IN": BURN_IN,
             "NUM_CHAINS": NUM_CHAINS, "BATCH_SIZE": batch,
             "AWSGLD_SIGMA2_FLOOR": AWSGLD_SIGMA2_FLOOR,
+            "SGHMC_LR_BASE": SGHMC_LR_BASE,
+            "SGHMC_FRICTION": SGHMC_FRICTION,
+            "SGHMC_TAU": SGHMC_TAU,
             "k_ndcg": K_NDCG,
             "theta_hat_definition": "3 chain pooled mean over post-burn",
         },

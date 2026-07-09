@@ -145,10 +145,11 @@ def sample_theta_star(group, scenario, rng):
 
 
 def generate_labels(theta_star, alpha_true, rng):
-    pi_star = (1.0 - alpha_true) * inv_logit(theta_star)
-    pi_star = np.clip(pi_star, 1e-10, 1 - 1e-10)
-    Y = rng.binomial(1, pi_star).astype(float)
-    return Y, pi_star
+    # p_obs = Pr(y_i=1) = (1-alpha)*sigmoid(theta) — 관측 확률이며 논문의 pi_i 자체 아님.
+    p_obs = (1.0 - alpha_true) * inv_logit(theta_star)
+    p_obs = np.clip(p_obs, 1e-10, 1 - 1e-10)
+    Y = rng.binomial(1, p_obs).astype(float)
+    return Y, p_obs   # 두 번째 반환값은 관측 확률(p_obs)이며 논문의 pi_i 가 아님
 
 
 def build_B(graph):
@@ -195,7 +196,7 @@ def ndcg_at_k(theta_star, theta_hat, k):
     return float(dcg / idcg) if idcg > 0 else 0.0
 
 
-def summarize_estimates(method, theta_star, pi_star, theta_hat, pi_hat, alpha_hat, Y, wall):
+def summarize_estimates(method, theta_star, p_obs, theta_hat, pi_hat, alpha_hat, Y, wall):
     if np.std(theta_hat) < 1e-12:
         slope, intercept = 0.0, float(np.mean(theta_star))
         theta_hat_cal = np.full_like(theta_hat, intercept, dtype=float)
@@ -206,7 +207,7 @@ def summarize_estimates(method, theta_star, pi_star, theta_hat, pi_hat, alpha_ha
     return TrialResult(
         method=method,
         mse_theta=float(np.mean((theta_hat - theta_star) ** 2)),
-        mse_pi=float(np.mean((pi_hat - pi_star) ** 2)),
+        mse_pi=float(np.mean((pi_hat - p_obs) ** 2)),
         mse_calibrated=float(np.mean((theta_hat_cal - theta_star) ** 2)),
         spearman=float(spearmanr(theta_star, theta_hat).statistic),
         kendall=float(kendalltau(theta_star, theta_hat).statistic),
@@ -220,7 +221,7 @@ def summarize_estimates(method, theta_star, pi_star, theta_hat, pi_hat, alpha_ha
     )
 
 
-def run_acmh(graph, Y, theta_star, pi_star, init_state):
+def run_acmh(graph, Y, theta_star, p_obs, init_state):
     t0 = time.perf_counter()
     result = gibbs_mh(
         Burn_in=BURN_IN, T=T, ini=init_state["ini"], n=graph["n"], graph=graph,
@@ -232,10 +233,10 @@ def run_acmh(graph, Y, theta_star, pi_star, init_state):
     alpha_hat = float(result["alpha_mn"])
     pi_hat = (1.0 - alpha_hat) * inv_logit(theta_hat)
     pi_hat = np.clip(pi_hat, 1e-10, 1 - 1e-10)
-    return summarize_estimates("acMH", theta_star, pi_star, theta_hat, pi_hat, alpha_hat, Y, wall)
+    return summarize_estimates("acMH", theta_star, p_obs, theta_hat, pi_hat, alpha_hat, Y, wall)
 
 
-def run_awsgld_mb(graph, Y, theta_star, pi_star, init_state, batch_size):
+def run_awsgld_mb(graph, Y, theta_star, p_obs, init_state, batch_size):
     method_label = "AWSGLD_full" if batch_size is None else f"AWSGLD_b{batch_size}"
     t0 = time.perf_counter()
     result = gibbs_mh_awsgld_mb(
@@ -249,7 +250,7 @@ def run_awsgld_mb(graph, Y, theta_star, pi_star, init_state, batch_size):
     alpha_hat = float(result["alpha_mn"])
     pi_hat = (1.0 - alpha_hat) * inv_logit(theta_hat)
     pi_hat = np.clip(pi_hat, 1e-10, 1 - 1e-10)
-    return summarize_estimates(method_label, theta_star, pi_star, theta_hat, pi_hat,
+    return summarize_estimates(method_label, theta_star, p_obs, theta_hat, pi_hat,
                                alpha_hat, Y, wall)
 
 
@@ -296,11 +297,11 @@ def main():
         rng = np.random.default_rng(SEED_BASE + r)
         graph = build_block_graph(DEFAULT_SCENARIO, rng)
         theta_star = sample_theta_star(graph["group"], DEFAULT_SCENARIO, rng)
-        Y, pi_star = generate_labels(theta_star, DEFAULT_SCENARIO["alpha_true"], rng)
+        Y, p_obs = generate_labels(theta_star, DEFAULT_SCENARIO["alpha_true"], rng)
         init_state = bss_initial_state(graph, Y)
 
         # acMH baseline
-        ac = run_acmh(graph, Y, theta_star, pi_star, init_state)
+        ac = run_acmh(graph, Y, theta_star, p_obs, init_state)
         results_by_method["acMH"].append(ac)
         print(f"[Trial {r+1}/{R}] acMH         | n_obs={ac.n_obs} | "
               f"MSE(θ)={ac.mse_theta:.4f} | Spear={ac.spearman:.4f} | "
@@ -308,7 +309,7 @@ def main():
 
         # AWSGLD across batch sizes
         for bs in AWSGLD_BATCH_SIZES:
-            res = run_awsgld_mb(graph, Y, theta_star, pi_star, init_state, bs)
+            res = run_awsgld_mb(graph, Y, theta_star, p_obs, init_state, bs)
             results_by_method[res.method].append(res)
             print(f"[Trial {r+1}/{R}] {res.method:13s}| n_obs={res.n_obs} | "
                   f"MSE(θ)={res.mse_theta:.4f} | Spear={res.spearman:.4f} | "

@@ -161,10 +161,11 @@ def sample_theta_star(group, scenario, rng):
 
 
 def generate_labels(theta_star, alpha_true, rng):
-    pi_star = (1.0 - alpha_true) * inv_logit(theta_star)
-    pi_star = np.clip(pi_star, 1e-10, 1 - 1e-10)
-    Y = rng.binomial(1, pi_star).astype(float)
-    return Y, pi_star
+    # p_obs = Pr(y_i=1) = (1-alpha)*sigmoid(theta) — 관측 확률이며 논문의 pi_i 자체 아님.
+    p_obs = (1.0 - alpha_true) * inv_logit(theta_star)
+    p_obs = np.clip(p_obs, 1e-10, 1 - 1e-10)
+    Y = rng.binomial(1, p_obs).astype(float)
+    return Y, p_obs   # 두 번째 반환값은 관측 확률(p_obs)이며 논문의 pi_i 가 아님
 
 
 def build_B(graph):
@@ -396,7 +397,7 @@ def plot_convergence(awsgld_res, theta_star, group, B, Y, u_0, out_path, scenari
 # ---------------------------------------------------------------------
 # Main.
 # ---------------------------------------------------------------------
-def run_one_scenario(key, out_dir):
+def run_one_scenario(key, out_dir, awsgld_only=False):
     global BLOCK_PROBS
     cfg = SCENARIOS[key]
     scenario = cfg["scenario"]
@@ -404,7 +405,8 @@ def run_one_scenario(key, out_dir):
     out_path = os.path.join(out_dir, f"awsgld_convergence_{key}.png")
 
     print("=" * 72)
-    print(f"{key} ({scenario['name']}) convergence diagnostics | T={T}, burn-in={BURN_IN}")
+    print(f"{key} ({scenario['name']}) convergence diagnostics | T={T}, burn-in={BURN_IN}"
+          + (" | AWSGLD-only" if awsgld_only else ""))
     print("=" * 72)
 
     rng = np.random.default_rng(SEED)
@@ -419,9 +421,12 @@ def run_one_scenario(key, out_dir):
     awsgld_res = run_awsgld_with_traces(graph, Y, init_state)
     print(f"AWSGLD done in {time.perf_counter() - t0:.1f}s")
 
-    t0 = time.perf_counter()
-    sghmc_res = run_sghmc_with_traces(graph, Y, init_state)
-    print(f"SGHMC done in {time.perf_counter() - t0:.1f}s")
+    # AWSGLD-only 모드: SGHMC 오버레이 생략 → 그림에 AWSGLD 곡선만 표시.
+    sghmc_res = None
+    if not awsgld_only:
+        t0 = time.perf_counter()
+        sghmc_res = run_sghmc_with_traces(graph, Y, init_state)
+        print(f"SGHMC done in {time.perf_counter() - t0:.1f}s")
 
     plot_convergence(
         awsgld_res, theta_star, graph["group"],
@@ -433,13 +438,16 @@ def run_one_scenario(key, out_dir):
 def main():
     out_dir = os.path.dirname(os.path.abspath(__file__))
     # CLI: pick scenarios by name; default = all three.
-    args = [a.lower() for a in sys.argv[1:]]
+    # 플래그 --awsgld-only : SGHMC 오버레이 없이 AWSGLD 곡선만 출력.
+    raw = [a.lower() for a in sys.argv[1:]]
+    awsgld_only = "--awsgld-only" in raw
+    args = [a for a in raw if not a.startswith("--")]
     keys = args if args else ["easy", "moderate", "difficult"]
     for key in keys:
         if key not in SCENARIOS:
             print(f"[skip] unknown scenario '{key}' (choices: {list(SCENARIOS)})")
             continue
-        run_one_scenario(key, out_dir)
+        run_one_scenario(key, out_dir, awsgld_only=awsgld_only)
 
 
 if __name__ == "__main__":

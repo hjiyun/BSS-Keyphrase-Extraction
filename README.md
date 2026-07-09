@@ -11,8 +11,16 @@ Wang et al. (2023) 의 BSS 키프레이즈 추출 프레임워크에서 acMH-wit
 ```
 code_JOC/                          # BSS 모델/샘플러 코드
 ├── keyphrase_functions_awsgld.py    AWSGLD gibbs_mh (sigma2_floor 매개변수화)
+├── mala_keyphrase.py                MALA v1/v2 (state precond + BtB 고유기저 coord step)
+├── awsgld_tunable.py                eps_k 스케줄 파라미터화
+├── awsgld_coordvar.py               단어별 분산 대각 preconditioner
 └── original/
     └── keyphrase_functions.py       Wang et al. (2023) 원본 acMH-within-Gibbs
+
+data_JOC/                          # Hulth 벤치마크 데이터 (읽기 전용) + 전처리
+├── reproduce_pos_filter.py           원논문 POS(noun/adj) 전처리 재현·문서수 검증
+├── build_baseline.py                 dense(>=10)/sparse(<10) 분할 + 전처리 산출
+└── baseline_preprocessed/            전처리 결과 (pre_process/ + truth/)
 
 simulation/
 ├── study_1a/                      Study 1A — 4 시나리오 × sampler 비교
@@ -34,8 +42,13 @@ simulation/
 │   ├── data_landscape_overview.py   분포 개요 시각화
 │   └── sampler_comparison.py        SGLD/qSGLD/cycSGLD/SGHMC/AWSGLD, 3 chain pooled
 │
-└── study_2/                       Study 2 — 수렴 진단 (convergence diagnostics)
-    └── awsgld_convergence.py        AWSGLD vs SGHMC 4-panel trace (θ, ‖θ−θ̄‖, U(x), running MSE)
+└── study_2/                       Study 2 — 수렴 진단 + 실데이터 & 다봉 트랩
+    ├── awsgld_convergence.py        AWSGLD vs SGHMC 4-panel trace (θ, ‖θ−θ̄‖, U(x), running MSE)
+    ├── acmh_vs_awsgld_4to10.py      Numba 가속 acMH(O(n) 증분) + 실문서 비교 하네스
+    ├── dense_test.py                dense 실문서 acMH vs AWSGLD (γ별 P/R/F/FDR)
+    ├── trap_multimode(_sharp).py    5모드 분산 트랩 + 저온·강 flat-histogram
+    ├── trap_consensus.py            공통키워드+모드별 미끼 트랩 (AWSGLD top-k 우위 입증)
+    └── archive/                     이전 트랩·sparse10 중간 산출물 보관
 ```
 
 ## 비교 샘플러 (6 종)
@@ -137,6 +150,35 @@ Easy / Moderate / Difficult 시나리오에서 동일 posterior·init 으로 두
 - **(c)** U(x_k) energy trace — multimodal exploration 증거
 - **(d)** ‖θ̄_k − θ*‖²/n — running posterior mean MSE
 
+## Study 2 — 실 키프레이즈 데이터 & 다봉 트랩 (acMH vs AWSGLD)
+
+Hulth 벤치마크(doc2098 등)를 원논문 방식으로 전처리(POS noun/adj, window-2 그래프)한 실문서에서
+acMH 와 AWSGLD 를 직접 비교. acMH 는 Numba + O(n) 증분 갱신으로 가속(≈111×).
+
+**실데이터 소견 (단봉 heavy-tail)**
+
+| 문서 유형 | 승자 | 근거 (예) |
+|---|---|---|
+| **dense** (키워드 풍부) | **AWSGLD** | recall→F 전 γ 우위 (γ=0.20 F: 0.624 vs 0.532) |
+| **sparse** (키워드 희소) | **acMH** | precision·FDR 우위 (과탐색 없음) |
+
+- 실 키프레이즈 사후분포는 **단봉 heavy-tail** 로, 자연적 다봉 trap 이 없다. 따라서 AWSGLD 의
+  mode-escape 강점은 **인위적 다봉 주입** 이 있어야 관찰된다.
+
+**합성 다봉 트랩 (실그래프 + log-sum-exp 혼합)**
+
+실그래프에 K-mode 혼합 posterior 를 주입, acMH(한 모드 갇힘) vs AWSGLD(모드 탈출) 비교.
+평가는 top-k / ROC AUC (FDR-cutoff 의 precision=1.0 인공물 회피).
+
+| 트랩 토폴로지 | 결과 |
+|---|---|
+| **5모드 분산** (`trap_multimode`) | 커버리지 vs 선명도 트레이드오프 — 탈출 온도 = π 흐려지는 온도 |
+| **consensus** (`trap_consensus`) | 공통키워드 + 모드별 미끼 → **AWSGLD top-k(저·중) 및 AUC 우위** |
+
+- **consensus 트랩**: 진짜 키워드를 모든 모드의 공통 신호로, 미끼 비키워드를 모드별로(키워드보다 높게)
+  배치. acMH 는 갇힌 모드의 미끼에 오염(top-5 P=0.000), AWSGLD 는 여러 모드를 평균내 미끼를
+  상쇄하고 공통 키워드만 부상(top-5 P=0.600). **ROC AUC 0.668 vs 0.571**.
+
 ## 지표 정의
 
 - **MSE_all** : 전체 노드 점추정 MSE (logit space)
@@ -164,6 +206,14 @@ python3 simulation/study_1c/sampler_comparison.py --n 200        # 5 sampler (n=
 
 # Study 2 — 수렴 진단
 python3 simulation/study_2/awsgld_convergence.py        # easy/moderate/difficult
+
+# Study 2 — 실데이터 전처리 & acMH vs AWSGLD
+python3 data_JOC/build_baseline.py                      # dense/sparse baseline 생성
+python3 simulation/study_2/dense_test.py                # dense 실문서 비교
+
+# Study 2 — 합성 다봉 트랩
+python3 simulation/study_2/trap_multimode.py            # 5모드 분산 트랩
+python3 simulation/study_2/trap_consensus.py            # consensus 트랩 (AWSGLD 우위)
 ```
 
 `.npz` chain 결과 파일은 `.gitignore` 로 제외 (대용량). 재실행으로 재생성됨.
@@ -179,8 +229,12 @@ python3 simulation/study_2/awsgld_convergence.py        # easy/moderate/difficul
 - [x] SGHMC (Chen et al. 2014) baseline 통합 (Study 1A/1B/1C/2)
 - [x] Study 1C : mini-batch / 큰 n (200/1500/10000) / 다 seed
 - [x] Study 2 : AWSGLD vs SGHMC 수렴 진단
+- [x] Hulth real 키프레이즈 데이터 전처리(POS) + baseline (dense/sparse)
+- [x] 실문서 acMH vs AWSGLD (dense→AWSGLD recall, sparse→acMH precision)
+- [x] MALA v1/v2 샘플러 구현 및 비교
+- [x] 합성 다봉 트랩 (consensus) 에서 AWSGLD mode-escape 우위 입증 (top-k/AUC)
 - [ ] SGHMC 하이퍼파라미터 (lr/friction) 튜닝
-- [ ] Hulth 등 real 키프레이즈 데이터 평가
+- [ ] 실데이터 다문서 확장 (트랩 소견 견고화)
 
 ## 참고
 

@@ -35,3 +35,12 @@ CLAUDE.md
 .DS_Store
 .vscode/
 *.log
+
+# Study 2 중간 산출물 — 폐기된 스캔은 로컬 보관, 문서가 인용하는 근거 파일만 추적
+simulation/study_2/archive/*
+!simulation/study_2/archive/acmh_vs_awsgld_4to10_summary.json
+!simulation/study_2/archive/acmh_vs_awsgld_4to10_by_gamma.csv
+
+# Study 3 지표 표 — 스크립트가 stdout 으로만 출력하므로 이 로그가 유일한 기록
+!simulation/study_3/run_metrics.log
+!simulation/study_3/run10_metrics.log

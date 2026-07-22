@@ -1,0 +1,2159 @@
+{
+ "H-41": {
+  "title": "HITS on the Web: How does it Compare? Marc",
+  "title_stems": [
+   "compar",
+   "hit",
+   "marc",
+   "web"
+  ]
+ },
+ "I-74": {
+  "title": "On the relevance of utterances in formal inter-agent dialogues Simon Parsons1 Peter",
+  "title_stems": [
+   "agent",
+   "dialogu",
+   "formal",
+   "inter",
+   "inter-ag",
+   "parsons1",
+   "peter",
+   "relev",
+   "simon",
+   "utter"
+  ]
+ },
+ "I-37": {
+  "title": "A Framework for Agent-Based Distributed Machine Learning and Data Mining Jan",
+  "title_stems": [
+   "agent",
+   "agent-bas",
+   "data",
+   "distribut",
+   "framework",
+   "jan",
+   "learn",
+   "machin",
+   "mine"
+  ]
+ },
+ "J-66": {
+  "title": "Expressive Negotiation over Donations to Charities∗ Vincent",
+  "title_stems": [
+   "chariti",
+   "donat",
+   "express",
+   "negoti",
+   "vincent"
+  ]
+ },
+ "I-70": {
+  "title": "A Multi-Agent System for Building Dynamic Ontologies Kévin",
+  "title_stems": [
+   "agent",
+   "build",
+   "dynam",
+   "kvin",
+   "multi",
+   "multi-ag",
+   "ontolog",
+   "system"
+  ]
+ },
+ "H-43": {
+  "title": "Combining Content and Link for Classification using Matrix Factorization Shenghuo Zhu Kai Yu Yun Chi Yihong",
+  "title_stems": [
+   "chi",
+   "classif",
+   "combin",
+   "content",
+   "factor",
+   "kai",
+   "link",
+   "matrix",
+   "shenghuo",
+   "yihong",
+   "yu",
+   "yun",
+   "zhu"
+  ]
+ },
+ "H-63": {
+  "title": "Location based Indexing Scheme for DAYS Debopam Acharya and Vijay",
+  "title_stems": [
+   "acharya",
+   "day",
+   "debopam",
+   "index",
+   "locat",
+   "scheme",
+   "vijay"
+  ]
+ },
+ "C-44": {
+  "title": "MSP: Multi-Sequence Positioning of Wireless Sensor Nodes∗ Ziguo",
+  "title_stems": [
+   "msp",
+   "multi",
+   "multi-sequ",
+   "node",
+   "posit",
+   "sensor",
+   "sequenc",
+   "wireless",
+   "ziguo"
+  ]
+ },
+ "J-55": {
+  "title": "From Optimal Limited To Unlimited Supply Auctions Jason D.",
+  "title_stems": [
+   "auction",
+   "jason",
+   "limit",
+   "optim",
+   "suppli",
+   "unlimit"
+  ]
+ },
+ "H-37": {
+  "title": "Relaxed Online SVMs for Spam Filtering D.",
+  "title_stems": [
+   "filter",
+   "onlin",
+   "relax",
+   "spam",
+   "svm"
+  ]
+ },
+ "I-65": {
+  "title": "Graphical Models for Online Solutions to Interactive POMDPs Prashant",
+  "title_stems": [
+   "graphic",
+   "interact",
+   "model",
+   "onlin",
+   "pomdp",
+   "prashant",
+   "solut"
+  ]
+ },
+ "C-61": {
+  "title": "Authority Assignment in Distributed Multi-Player Proxy-based Games Sudhir Aggarwal",
+  "title_stems": [
+   "aggarw",
+   "assign",
+   "author",
+   "distribut",
+   "game",
+   "multi",
+   "multi-play",
+   "player",
+   "proxi",
+   "proxy-bas",
+   "sudhir"
+  ]
+ },
+ "H-42": {
+  "title": "HITS Hits TRECExploring IR Evaluation Results with Network Analysis Stefano",
+  "title_stems": [
+   "analysi",
+   "evalu",
+   "hit",
+   "ir",
+   "network",
+   "result",
+   "stefano",
+   "trecexplor"
+  ]
+ },
+ "I-62": {
+  "title": "A Q-decomposition and Bounded RTDP Approach to Resource Allocation Pierrick Plamondon and Brahim Chaib-draa Computer Science &",
+  "title_stems": [
+   "alloc",
+   "approach",
+   "bound",
+   "brahim",
+   "chaib",
+   "chaib-draa",
+   "comput",
+   "decomposit",
+   "draa",
+   "pierrick",
+   "plamondon",
+   "q-decomposit",
+   "resourc",
+   "rtdp",
+   "scienc"
+  ]
+ },
+ "I-55": {
+  "title": "Searching for Joint Gains in Automated Negotiations Based on Multi-criteria Decision Making Theory Quoc Bao Vo School of Computer Science and IT RMIT University, Australia",
+  "title_stems": [
+   "australia",
+   "autom",
+   "bao",
+   "comput",
+   "criteria",
+   "decis",
+   "gain",
+   "joint",
+   "make",
+   "multi",
+   "multi-criteria",
+   "negoti",
+   "quoc",
+   "rmit",
+   "school",
+   "scienc",
+   "search",
+   "theori",
+   "univers",
+   "vo"
+  ]
+ },
+ "H-88": {
+  "title": "Controlling Overlap in Content-Oriented XML Retrieval Charles L. A. Clarke School of Computer Science, University of Waterloo, Canada",
+  "title_stems": [
+   "canada",
+   "charl",
+   "clark",
+   "comput",
+   "content",
+   "content-ori",
+   "control",
+   "orient",
+   "overlap",
+   "retriev",
+   "school",
+   "scienc",
+   "univers",
+   "waterloo",
+   "xml"
+  ]
+ },
+ "H-47": {
+  "title": "A Semantic Approach to Contextual Advertising Andrei Broder Marcus Fontoura Vanja Josifovski Lance",
+  "title_stems": [
+   "advertis",
+   "andrei",
+   "approach",
+   "broder",
+   "contextu",
+   "fontoura",
+   "josifovski",
+   "lanc",
+   "marcu",
+   "semant",
+   "vanja"
+  ]
+ },
+ "C-78": {
+  "title": "An Architectural Framework and a Middleware for Cooperating Smart Components ∗ Ant´onio",
+  "title_stems": [
+   "antonio",
+   "architectur",
+   "compon",
+   "cooper",
+   "framework",
+   "middlewar",
+   "smart"
+  ]
+ },
+ "J-41": {
+  "title": "An Analysis of Alternative Slot Auction Designs for Sponsored Search S´ebastien",
+  "title_stems": [
+   "altern",
+   "analysi",
+   "auction",
+   "design",
+   "search",
+   "sebastien",
+   "slot",
+   "sponsor"
+  ]
+ },
+ "H-97": {
+  "title": "Feature Representation for Effective Action-Item Detection Paul N.",
+  "title_stems": [
+   "action",
+   "action-item",
+   "detect",
+   "effect",
+   "featur",
+   "item",
+   "paul",
+   "represent"
+  ]
+ },
+ "J-33": {
+  "title": "Bid Expressiveness and Clearing Algorithms in Multiattribute Double Auctions",
+  "title_stems": [
+   "algorithm",
+   "auction",
+   "bid",
+   "clear",
+   "doubl",
+   "express",
+   "multiattribut"
+  ]
+ },
+ "I-46": {
+  "title": "Modular Interpreted Systems Wojciech",
+  "title_stems": [
+   "interpret",
+   "modular",
+   "system",
+   "wojciech"
+  ]
+ },
+ "C-52": {
+  "title": "Fairness in Dead-Reckoning based Distributed Multi-Player Games Sudhir Aggarwal Hemant",
+  "title_stems": [
+   "aggarw",
+   "dead",
+   "dead-reckon",
+   "distribut",
+   "fair",
+   "game",
+   "hemant",
+   "multi",
+   "multi-play",
+   "player",
+   "reckon",
+   "sudhir"
+  ]
+ },
+ "J-74": {
+  "title": "On Cheating in Sealed-Bid Auctions Ryan",
+  "title_stems": [
+   "auction",
+   "bid",
+   "cheat",
+   "ryan",
+   "seal",
+   "sealed-bid"
+  ]
+ },
+ "J-34": {
+  "title": "(In)Stability Properties of Limit Order Dynamics Eyal Even-Dar ∗ Sham M. Kakade † Michael Kearns ‡ Yishay Mansour §",
+  "title_stems": [
+   "dar",
+   "dynam",
+   "even",
+   "even-dar",
+   "eyal",
+   "instabl",
+   "kakad",
+   "kearn",
+   "limit",
+   "mansour",
+   "michael",
+   "order",
+   "properti",
+   "sham",
+   "yishay"
+  ]
+ },
+ "J-37": {
+  "title": "Finding Equilibria in Large Sequential Games of Imperfect Information∗ Andrew",
+  "title_stems": [
+   "andrew",
+   "equilibria",
+   "find",
+   "game",
+   "imperfect",
+   "inform",
+   "larg",
+   "sequenti"
+  ]
+ },
+ "J-51": {
+  "title": "Complexity of (Iterated) Dominance∗ Vincent",
+  "title_stems": [
+   "complex",
+   "domin",
+   "iter",
+   "vincent"
+  ]
+ },
+ "C-67": {
+  "title": "A Holistic Approach to High-Performance Computing: Xgrid Experience David Przybyla Ringling School of Art and Design 2700 North Tamiami Trail Sarasota, Florida 34234 941-309-4720",
+  "title_stems": [
+   "2700",
+   "309",
+   "34234",
+   "4720",
+   "941",
+   "941-309-4720",
+   "approach",
+   "art",
+   "comput",
+   "david",
+   "design",
+   "experi",
+   "florida",
+   "high",
+   "high-perform",
+   "holist",
+   "north",
+   "perform",
+   "przybyla",
+   "ringl",
+   "sarasota",
+   "school",
+   "tamiami",
+   "trail",
+   "xgrid"
+  ]
+ },
+ "H-60": {
+  "title": "A Frequency-based and a Poisson-based Definition of the Probability of Being Informative Thomas Roelleke Department of Computer Science Queen Mary University of London",
+  "title_stems": [
+   "comput",
+   "definit",
+   "depart",
+   "frequenc",
+   "frequency-bas",
+   "inform",
+   "london",
+   "mari",
+   "poisson",
+   "poisson-bas",
+   "probabl",
+   "queen",
+   "roellek",
+   "scienc",
+   "thoma",
+   "univers"
+  ]
+ },
+ "J-45": {
+  "title": "Empirical Mechanism Design: Methods, with Application to a Supply-Chain Scenario Yevgeniy Vorobeychik, Christopher Kiekintveld, and Michael",
+  "title_stems": [
+   "applic",
+   "chain",
+   "christoph",
+   "design",
+   "empir",
+   "kiekintveld",
+   "mechan",
+   "method",
+   "michael",
+   "scenario",
+   "suppli",
+   "supply-chain",
+   "vorobeychik",
+   "yevgeniy"
+  ]
+ },
+ "I-58": {
+  "title": "An Efficient Heuristic Approach for Security Against Multiple Adversaries Praveen Paruchuri, Jonathan P. Pearce, Milind Tambe,",
+  "title_stems": [
+   "adversari",
+   "against",
+   "approach",
+   "effici",
+   "heurist",
+   "jonathan",
+   "milind",
+   "multipl",
+   "paruchuri",
+   "pearc",
+   "praveen",
+   "secur",
+   "tamb"
+  ]
+ },
+ "J-42": {
+  "title": "The Dynamics of Viral Marketing ∗",
+  "title_stems": [
+   "dynam",
+   "market",
+   "viral"
+  ]
+ },
+ "C-72": {
+  "title": "GUESS: Gossiping Updates for Efficient Spectrum Sensing Nabeel",
+  "title_stems": [
+   "effici",
+   "gossip",
+   "guess",
+   "nabeel",
+   "sens",
+   "spectrum",
+   "updat"
+  ]
+ },
+ "C-83": {
+  "title": "Concept and Architecture of a Pervasive Document Editing and Managing System Stefania",
+  "title_stems": [
+   "architectur",
+   "concept",
+   "document",
+   "edit",
+   "manag",
+   "pervas",
+   "stefania",
+   "system"
+  ]
+ },
+ "H-50": {
+  "title": "An Outranking Approach for Rank Aggregation in Information Retrieval Mohamed",
+  "title_stems": [
+   "aggreg",
+   "approach",
+   "inform",
+   "moham",
+   "outrank",
+   "rank",
+   "retriev"
+  ]
+ },
+ "J-56": {
+  "title": "Robust Solutions for Combinatorial Auctions ∗ Alan",
+  "title_stems": [
+   "alan",
+   "auction",
+   "combinatori",
+   "robust",
+   "solut"
+  ]
+ },
+ "J-52": {
+  "title": "Hidden-Action in Multi-Hop Routing Michal Feldman1",
+  "title_stems": [
+   "action",
+   "feldman1",
+   "hidden",
+   "hidden-act",
+   "hop",
+   "michal",
+   "multi",
+   "multi-hop",
+   "rout"
+  ]
+ },
+ "H-44": {
+  "title": "A Time Machine for Text Search Klaus Berberich Srikanta Bedathur Thomas Neumann Gerhard",
+  "title_stems": [
+   "bedathur",
+   "berberich",
+   "gerhard",
+   "klau",
+   "machin",
+   "neumann",
+   "search",
+   "srikanta",
+   "text",
+   "thoma",
+   "time"
+  ]
+ },
+ "H-45": {
+  "title": "Query Performance Prediction in Web Search Environments Yun Zhou and W. Bruce",
+  "title_stems": [
+   "bruce",
+   "environ",
+   "perform",
+   "predict",
+   "queri",
+   "search",
+   "web",
+   "yun",
+   "zhou"
+  ]
+ },
+ "H-73": {
+  "title": "Unified Utility Maximization Framework for Resource Selection Luo Si Language Technology Inst. School of Compute Science Carnegie Mellon University Pittsburgh, PA 15213",
+  "title_stems": [
+   "15213",
+   "carnegi",
+   "comput",
+   "framework",
+   "inst",
+   "languag",
+   "luo",
+   "maxim",
+   "mellon",
+   "pa",
+   "pittsburgh",
+   "resourc",
+   "school",
+   "scienc",
+   "select",
+   "si",
+   "technolog",
+   "unifi",
+   "univers",
+   "util"
+  ]
+ },
+ "C-62": {
+  "title": "Network Monitors and Contracting Systems: Competition and Innovation",
+  "title_stems": [
+   "competit",
+   "contract",
+   "innov",
+   "monitor",
+   "network",
+   "system"
+  ]
+ },
+ "J-40": {
+  "title": "Networks Preserving Evolutionary Equilibria and the Power of Randomization Michael",
+  "title_stems": [
+   "equilibria",
+   "evolutionari",
+   "michael",
+   "network",
+   "power",
+   "preserv",
+   "random"
+  ]
+ },
+ "J-36": {
+  "title": "Playing Games in Many Possible Worlds Matt",
+  "title_stems": [
+   "game",
+   "mani",
+   "matt",
+   "play",
+   "possibl",
+   "world"
+  ]
+ },
+ "H-38": {
+  "title": "DiffusionRank: A Possible Penicillin for Web Spamming Haixuan",
+  "title_stems": [
+   "diffusionrank",
+   "haixuan",
+   "penicillin",
+   "possibl",
+   "spam",
+   "web"
+  ]
+ },
+ "J-63": {
+  "title": "Negotiation-Range Mechanisms: Exploring the Limits of Truthful Efficient Markets",
+  "title_stems": [
+   "effici",
+   "explor",
+   "limit",
+   "market",
+   "mechan",
+   "negoti",
+   "negotiation-rang",
+   "rang",
+   "truth"
+  ]
+ },
+ "I-63": {
+  "title": "Combinatorial Resource Scheduling for Multiagent MDPs Dmitri A. Dolgov,",
+  "title_stems": [
+   "combinatori",
+   "dmitri",
+   "dolgov",
+   "mdp",
+   "multiag",
+   "resourc",
+   "schedul"
+  ]
+ },
+ "C-65": {
+  "title": "Shooter Localization and Weapon Classification with Soldier-Wearable Networked Sensors Peter Volgyesi, Gyorgy Balogh, Andras Nadas, Christopher B. Nash,",
+  "title_stems": [
+   "andra",
+   "balogh",
+   "christoph",
+   "classif",
+   "gyorgi",
+   "local",
+   "nada",
+   "nash",
+   "network",
+   "peter",
+   "sensor",
+   "shooter",
+   "soldier",
+   "soldier-wear",
+   "volgyesi",
+   "weapon",
+   "wearabl"
+  ]
+ },
+ "H-79": {
+  "title": "Beyond PageRank: Machine Learning for Static Ranking Matthew Richardson Microsoft Research One Microsoft Way Redmond, WA 98052 +1 (425) 722-3325",
+  "title_stems": [
+   "3325",
+   "425",
+   "722",
+   "722-3325",
+   "98052",
+   "beyond",
+   "learn",
+   "machin",
+   "matthew",
+   "microsoft",
+   "one",
+   "pagerank",
+   "rank",
+   "redmond",
+   "research",
+   "richardson",
+   "static",
+   "wa",
+   "way"
+  ]
+ },
+ "H-52": {
+  "title": "Vocabulary Independent Spoken Term Detection Jonathan",
+  "title_stems": [
+   "detect",
+   "independ",
+   "jonathan",
+   "spoken",
+   "term",
+   "vocabulari"
+  ]
+ },
+ "C-80": {
+  "title": "Consistency-preserving Caching of Dynamic Database Content∗ Niraj",
+  "title_stems": [
+   "cach",
+   "consist",
+   "consistency-preserv",
+   "content",
+   "databas",
+   "dynam",
+   "niraj",
+   "preserv"
+  ]
+ },
+ "H-69": {
+  "title": "Ranking Web Objects from Multiple Communities Le",
+  "title_stems": [
+   "commun",
+   "le",
+   "multipl",
+   "object",
+   "rank",
+   "web"
+  ]
+ },
+ "H-95": {
+  "title": "Handling Locations in Search Engine Queries Bruno",
+  "title_stems": [
+   "bruno",
+   "engin",
+   "handl",
+   "locat",
+   "queri",
+   "search"
+  ]
+ },
+ "J-44": {
+  "title": "Scouts, Promoters, and Connectors: The Roles of Ratings in Nearest Neighbor Collaborative Filtering Bharath Kumar Mohan Dept. of CSA Indian Institute of Science Bangalore 560 012, India",
+  "title_stems": [
+   "012",
+   "560",
+   "bangalor",
+   "bharath",
+   "collabor",
+   "connector",
+   "csa",
+   "dept",
+   "filter",
+   "india",
+   "indian",
+   "institut",
+   "kumar",
+   "mohan",
+   "nearest",
+   "neighbor",
+   "promot",
+   "rate",
+   "role",
+   "scienc",
+   "scout"
+  ]
+ },
+ "H-87": {
+  "title": "Robustness of Adaptive Filtering Methods In a Cross-benchmark Evaluation Yiming Yang, Shinjae Yoo, Jian Zhang,",
+  "title_stems": [
+   "adapt",
+   "benchmark",
+   "cross",
+   "cross-benchmark",
+   "evalu",
+   "filter",
+   "jian",
+   "method",
+   "robust",
+   "shinja",
+   "yang",
+   "yime",
+   "yoo",
+   "zhang"
+  ]
+ },
+ "C-66": {
+  "title": "Heuristics-Based Scheduling of Composite Web Service Workloads Thomas",
+  "title_stems": [
+   "composit",
+   "heurist",
+   "heuristics-bas",
+   "schedul",
+   "servic",
+   "thoma",
+   "web",
+   "workload"
+  ]
+ },
+ "I-38": {
+  "title": "Bidding Algorithms for a Distributed Combinatorial Auction Benito",
+  "title_stems": [
+   "algorithm",
+   "auction",
+   "benito",
+   "bid",
+   "combinatori",
+   "distribut"
+  ]
+ },
+ "J-73": {
+  "title": "Competitive Algorithms for VWAP and Limit Order Trading Sham M.",
+  "title_stems": [
+   "algorithm",
+   "competit",
+   "limit",
+   "order",
+   "sham",
+   "trade",
+   "vwap"
+  ]
+ },
+ "H-92": {
+  "title": "Improving Web Search Ranking by Incorporating User Behavior Information",
+  "title_stems": [
+   "behavior",
+   "improv",
+   "incorpor",
+   "inform",
+   "rank",
+   "search",
+   "user",
+   "web"
+  ]
+ },
+ "H-96": {
+  "title": "A Study of Factors Affecting the Utility of Implicit Relevance Feedback",
+  "title_stems": [
+   "affect",
+   "factor",
+   "feedback",
+   "implicit",
+   "relev",
+   "studi",
+   "util"
+  ]
+ },
+ "C-74": {
+  "title": "Adapting Asynchronous Messaging Middleware to ad-hoc Networking Mirco",
+  "title_stems": [
+   "ad",
+   "ad-hoc",
+   "adapt",
+   "asynchron",
+   "hoc",
+   "messag",
+   "middlewar",
+   "mirco",
+   "network"
+  ]
+ },
+ "C-50": {
+  "title": "CenWits: A Sensor-Based Loosely Coupled Search and Rescue System Using Witnesses Jyh-How",
+  "title_stems": [
+   "cenwit",
+   "coupl",
+   "jyh",
+   "jyh-how",
+   "loos",
+   "rescu",
+   "search",
+   "sensor",
+   "sensor-bas",
+   "system",
+   "wit"
+  ]
+ },
+ "I-43": {
+  "title": "Dynamics Based Control with an Application to Area-Sweeping Problems Zinovi Rabinovich Engineering and Computer Science Hebrew University of Jerusalem Jerusalem, Israel",
+  "title_stems": [
+   "applic",
+   "area",
+   "area-sweep",
+   "comput",
+   "control",
+   "dynam",
+   "engin",
+   "hebrew",
+   "israel",
+   "jerusalem",
+   "problem",
+   "rabinovich",
+   "scienc",
+   "sweep",
+   "univers",
+   "zinovi"
+  ]
+ },
+ "H-46": {
+  "title": "Broad Expertise Retrieval in Sparse Data Environments Krisztian",
+  "title_stems": [
+   "broad",
+   "data",
+   "environ",
+   "expertis",
+   "krisztian",
+   "retriev",
+   "spars"
+  ]
+ },
+ "C-57": {
+  "title": "Congestion Games with Load-Dependent Failures: Identical Resources Michal",
+  "title_stems": [
+   "congest",
+   "depend",
+   "failur",
+   "game",
+   "ident",
+   "load",
+   "load-depend",
+   "michal",
+   "resourc"
+  ]
+ },
+ "I-68": {
+  "title": "On Opportunistic Techniques for Solving Decentralized Markov Decision Processes with Temporal Constraints Janusz Marecki and Milind",
+  "title_stems": [
+   "constraint",
+   "decentr",
+   "decis",
+   "janusz",
+   "marecki",
+   "markov",
+   "milind",
+   "opportunist",
+   "process",
+   "solv",
+   "techniqu",
+   "tempor"
+  ]
+ },
+ "I-50": {
+  "title": "Agents, Beliefs, and Plausible Behavior in a Temporal Setting Nils",
+  "title_stems": [
+   "agent",
+   "behavior",
+   "belief",
+   "nil",
+   "plausibl",
+   "set",
+   "tempor"
+  ]
+ },
+ "J-58": {
+  "title": "Towards Truthful Mechanisms for Binary Demand Games: A General Framework Ming-Yang",
+  "title_stems": [
+   "binari",
+   "demand",
+   "framework",
+   "game",
+   "gener",
+   "mechan",
+   "ming",
+   "ming-yang",
+   "truth",
+   "yang"
+  ]
+ },
+ "C-46": {
+  "title": "TSAR: A Two Tier Sensor Storage Architecture Using Interval Skip Graphs ∗ Peter Desnoyers, Deepak Ganesan, and Prashant Shenoy Department of Computer Science University of Massachusetts Amherst, MA 01003",
+  "title_stems": [
+   "01003",
+   "amherst",
+   "architectur",
+   "comput",
+   "deepak",
+   "depart",
+   "desnoy",
+   "ganesan",
+   "graph",
+   "interv",
+   "ma",
+   "massachusett",
+   "peter",
+   "prashant",
+   "scienc",
+   "sensor",
+   "shenoy",
+   "skip",
+   "storag",
+   "tier",
+   "tsar",
+   "two",
+   "univers"
+  ]
+ },
+ "C-48": {
+  "title": "Multi-dimensional Range Queries in Sensor Networks∗ Xin Li † Young Jin Kim † Ramesh Govindan † Wei Hong ‡",
+  "title_stems": [
+   "dimension",
+   "govindan",
+   "hong",
+   "jin",
+   "kim",
+   "li",
+   "multi",
+   "multi-dimension",
+   "network",
+   "queri",
+   "ramesh",
+   "rang",
+   "sensor",
+   "wei",
+   "xin",
+   "young"
+  ]
+ },
+ "J-72": {
+  "title": "Applying Learning Algorithms to Preference Elicitation Sebastien M.",
+  "title_stems": [
+   "algorithm",
+   "appli",
+   "elicit",
+   "learn",
+   "prefer",
+   "sebastien"
+  ]
+ },
+ "I-53": {
+  "title": "A Randomized Method for the Shapley Value for the Voting Game",
+  "title_stems": [
+   "game",
+   "method",
+   "random",
+   "shapley",
+   "valu",
+   "vote"
+  ]
+ },
+ "C-49": {
+  "title": "Evaluating Opportunistic Routing Protocols with Large Realistic Contact Traces Libo Song and David",
+  "title_stems": [
+   "contact",
+   "david",
+   "evalu",
+   "larg",
+   "libo",
+   "opportunist",
+   "protocol",
+   "realist",
+   "rout",
+   "song",
+   "trace"
+  ]
+ },
+ "J-67": {
+  "title": "Mechanism Design for Online Real-Time Scheduling Ryan",
+  "title_stems": [
+   "design",
+   "mechan",
+   "onlin",
+   "real",
+   "real-tim",
+   "ryan",
+   "schedul",
+   "time"
+  ]
+ },
+ "H-84": {
+  "title": "Event Threading within News Topics Ramesh Nallapati, Ao Feng, Fuchun Peng,",
+  "title_stems": [
+   "ao",
+   "event",
+   "feng",
+   "fuchun",
+   "nallapati",
+   "news",
+   "peng",
+   "ramesh",
+   "thread",
+   "topic",
+   "within"
+  ]
+ },
+ "H-81": {
+  "title": "Distance Measures for MPEG-7-based Retrieval Horst",
+  "title_stems": [
+   "distanc",
+   "horst",
+   "measur",
+   "mpeg",
+   "mpeg-7-bas",
+   "retriev"
+  ]
+ },
+ "H-83": {
+  "title": "Estimating the Global PageRank of Web Communities Jason V.",
+  "title_stems": [
+   "commun",
+   "estim",
+   "global",
+   "jason",
+   "pagerank",
+   "web"
+  ]
+ },
+ "J-60": {
+  "title": "On Decentralized Incentive Compatible Mechanisms for Partially Informed Environments ∗ Ahuva Mu\"alem School of Engineering and Computer Science The Hebrew University of Jerusalem",
+  "title_stems": [
+   "ahuva",
+   "compat",
+   "comput",
+   "decentr",
+   "engin",
+   "environ",
+   "hebrew",
+   "incent",
+   "inform",
+   "jerusalem",
+   "mechan",
+   "mualem",
+   "partial",
+   "school",
+   "scienc",
+   "univers"
+  ]
+ },
+ "I-75": {
+  "title": "Hypotheses Refinement under Topological Communication Constraints ∗ Gauvain",
+  "title_stems": [
+   "commun",
+   "constraint",
+   "gauvain",
+   "hypothes",
+   "refin",
+   "topolog"
+  ]
+ },
+ "C-75": {
+  "title": "Composition of a DIDS by Integrating Heterogeneous IDSs on Grids",
+  "title_stems": [
+   "composit",
+   "did",
+   "grid",
+   "heterogen",
+   "idss",
+   "integr"
+  ]
+ },
+ "H-48": {
+  "title": "A New Approach for Evaluating Query Expansion: Query-Document Term Mismatch",
+  "title_stems": [
+   "approach",
+   "document",
+   "evalu",
+   "expans",
+   "mismatch",
+   "queri",
+   "query-docu",
+   "term"
+  ]
+ },
+ "H-85": {
+  "title": "Learning User Interaction Models for Predicting Web Search Result Preferences",
+  "title_stems": [
+   "interact",
+   "learn",
+   "model",
+   "predict",
+   "prefer",
+   "result",
+   "search",
+   "user",
+   "web"
+  ]
+ },
+ "I-59": {
+  "title": "An Agent-Based Approach for Privacy-Preserving Recommender Systems",
+  "title_stems": [
+   "agent",
+   "agent-bas",
+   "approach",
+   "preserv",
+   "privaci",
+   "privacy-preserv",
+   "recommend",
+   "system"
+  ]
+ },
+ "I-48": {
+  "title": "Normative System Games Thomas ◦ Agotnes Dept of Computer Engineering Bergen University College PB. 2030, N-5020 Bergen Norway",
+  "title_stems": [
+   "2030",
+   "5020",
+   "agotn",
+   "bergen",
+   "colleg",
+   "comput",
+   "dept",
+   "engin",
+   "game",
+   "n-5020",
+   "norm",
+   "norway",
+   "pb",
+   "system",
+   "thoma",
+   "univers"
+  ]
+ },
+ "I-47": {
+  "title": "Operational Semantics of Multiagent Interactions",
+  "title_stems": [
+   "interact",
+   "multiag",
+   "oper",
+   "semant"
+  ]
+ },
+ "I-56": {
+  "title": "Unifying Distributed Constraint Algorithms in a BDI Negotiation Framework Bao Chau Le Dinh and Kiam Tian",
+  "title_stems": [
+   "algorithm",
+   "bao",
+   "bdi",
+   "chau",
+   "constraint",
+   "dinh",
+   "distribut",
+   "framework",
+   "kiam",
+   "le",
+   "negoti",
+   "tian",
+   "unifi"
+  ]
+ },
+ "H-49": {
+  "title": "Performance Prediction Using Spatial Autocorrelation Fernando",
+  "title_stems": [
+   "autocorrel",
+   "fernando",
+   "perform",
+   "predict",
+   "spatial"
+  ]
+ },
+ "I-66": {
+  "title": "Letting loose a SPIDER on a network of POMDPs: Generating quality guaranteed policies Pradeep Varakantham, Janusz Marecki, Yuichi Yabu∗ , Milind",
+  "title_stems": [
+   "gener",
+   "guarante",
+   "janusz",
+   "let",
+   "loos",
+   "marecki",
+   "milind",
+   "network",
+   "polici",
+   "pomdp",
+   "pradeep",
+   "qualiti",
+   "spider",
+   "varakantham",
+   "yabu",
+   "yuichi"
+  ]
+ },
+ "J-61": {
+  "title": "ICE: An Iterative Combinatorial Exchange David C. Parkes∗ † Ruggiero Cavallo† Nick Elprin† Adam Juda† S´ebastien Lahaie† Benjamin Lubin† Loizos",
+  "title_stems": [
+   "adam",
+   "benjamin",
+   "cavallo",
+   "combinatori",
+   "david",
+   "elprin",
+   "exchang",
+   "ice",
+   "iter",
+   "juda",
+   "lahai",
+   "loizo",
+   "lubin",
+   "nick",
+   "park",
+   "ruggiero",
+   "sebastien"
+  ]
+ },
+ "I-73": {
+  "title": "Exchanging Reputation Values among Heterogeneous Agent Reputation Models: An Experience on ART Testbed",
+  "title_stems": [
+   "agent",
+   "art",
+   "exchang",
+   "experi",
+   "heterogen",
+   "model",
+   "reput",
+   "testb",
+   "valu"
+  ]
+ },
+ "H-35": {
+  "title": "AdaRank: A Boosting Algorithm for Information Retrieval Jun Xu Microsoft Research Asia No. 49 Zhichun Road, Haidian Distinct Beijing, China 100080",
+  "title_stems": [
+   "100080",
+   "49",
+   "adarank",
+   "algorithm",
+   "asia",
+   "beij",
+   "boost",
+   "china",
+   "distinct",
+   "haidian",
+   "inform",
+   "jun",
+   "microsoft",
+   "research",
+   "retriev",
+   "road",
+   "xu",
+   "zhichun"
+  ]
+ },
+ "I-76": {
+  "title": "Negotiation by Abduction and Relaxation Chiaki",
+  "title_stems": [
+   "abduct",
+   "chiaki",
+   "negoti",
+   "relax"
+  ]
+ },
+ "J-39": {
+  "title": "The Sequential Auction Problem on eBay: An Empirical Analysis and a Solution ∗ Adam I.",
+  "title_stems": [
+   "adam",
+   "analysi",
+   "auction",
+   "ebay",
+   "empir",
+   "problem",
+   "sequenti",
+   "solut"
+  ]
+ },
+ "I-49": {
+  "title": "A Multilateral Multi-issue Negotiation Protocol",
+  "title_stems": [
+   "issu",
+   "multi",
+   "multi-issu",
+   "multilater",
+   "negoti",
+   "protocol"
+  ]
+ },
+ "J-65": {
+  "title": "Privacy in Electronic Commerce and the Economics of Immediate Gratification Alessandro",
+  "title_stems": [
+   "alessandro",
+   "commerc",
+   "econom",
+   "electron",
+   "gratif",
+   "immedi",
+   "privaci"
+  ]
+ },
+ "H-53": {
+  "title": "Context Sensitive Stemming for Web Search Fuchun Peng Nawaaz Ahmed Xin Li",
+  "title_stems": [
+   "ahm",
+   "context",
+   "fuchun",
+   "li",
+   "nawaaz",
+   "peng",
+   "search",
+   "sensit",
+   "stem",
+   "web",
+   "xin"
+  ]
+ },
+ "C-55": {
+  "title": "Context Awareness for Group Interaction Support Alois",
+  "title_stems": [
+   "aloi",
+   "awar",
+   "context",
+   "group",
+   "interact",
+   "support"
+  ]
+ },
+ "J-62": {
+  "title": "Weak Monotonicity Suffices for Truthfulness on Convex Domains Michael",
+  "title_stems": [
+   "convex",
+   "domain",
+   "michael",
+   "monoton",
+   "suffic",
+   "truth",
+   "weak"
+  ]
+ },
+ "J-70": {
+  "title": "Self-interested Automated Mechanism Design and Implications for Optimal Combinatorial Auctions∗ Vincent",
+  "title_stems": [
+   "auction",
+   "autom",
+   "combinatori",
+   "design",
+   "implic",
+   "interest",
+   "mechan",
+   "optim",
+   "self",
+   "self-interest",
+   "vincent"
+  ]
+ },
+ "I-52": {
+  "title": "A Unified and General Framework for Argumentation-based Negotiation Leila",
+  "title_stems": [
+   "argument",
+   "argumentation-bas",
+   "framework",
+   "gener",
+   "leila",
+   "negoti",
+   "unifi"
+  ]
+ },
+ "C-45": {
+  "title": "StarDust: A Flexible Architecture for Passive Localization in Wireless Sensor Networks ∗ Radu Stoleru, Pascal Vicaire, Tian He†, John",
+  "title_stems": [
+   "architectur",
+   "flexibl",
+   "john",
+   "local",
+   "network",
+   "pascal",
+   "passiv",
+   "radu",
+   "sensor",
+   "stardust",
+   "stoleru",
+   "tian",
+   "vicair",
+   "wireless"
+  ]
+ },
+ "J-53": {
+  "title": "A Price-Anticipating Resource Allocation Mechanism for Distributed Shared Clusters Michal",
+  "title_stems": [
+   "alloc",
+   "anticip",
+   "cluster",
+   "distribut",
+   "mechan",
+   "michal",
+   "price",
+   "price-anticip",
+   "resourc",
+   "share"
+  ]
+ },
+ "H-61": {
+  "title": "Impedance Coupling in Content-targeted Advertising",
+  "title_stems": [
+   "advertis",
+   "content",
+   "content-target",
+   "coupl",
+   "imped",
+   "target"
+  ]
+ },
+ "I-45": {
+  "title": "Implementing Commitment-Based Interactions∗",
+  "title_stems": [
+   "commit",
+   "commitment-bas",
+   "implement",
+   "interact"
+  ]
+ },
+ "C-77": {
+  "title": "Tracking Immediate Predecessors in Distributed Computations Emmanuelle Anceaume Jean-Michel H´elary Michel Raynal IRISA, Campus Beaulieu 35042 Rennes Cedex, France",
+  "title_stems": [
+   "35042",
+   "anceaum",
+   "beaulieu",
+   "campu",
+   "cedex",
+   "comput",
+   "distribut",
+   "emmanuel",
+   "franc",
+   "helari",
+   "immedi",
+   "irisa",
+   "jean",
+   "jean-michel",
+   "michel",
+   "predecessor",
+   "raynal",
+   "renn",
+   "track"
+  ]
+ },
+ "C-81": {
+  "title": "Adaptive Duty Cycling for Energy Harvesting Systems Jason Hsu, Sadaf Zahedi, Aman Kansal, Mani Srivastava",
+  "title_stems": [
+   "adapt",
+   "aman",
+   "cycl",
+   "duti",
+   "energi",
+   "harvest",
+   "hsu",
+   "jason",
+   "kansal",
+   "mani",
+   "sadaf",
+   "srivastava",
+   "system",
+   "zahedi"
+  ]
+ },
+ "J-71": {
+  "title": "A Dynamic Pari-Mutuel Market for Hedging, Wagering, and Information Aggregation David M.",
+  "title_stems": [
+   "aggreg",
+   "david",
+   "dynam",
+   "hedg",
+   "inform",
+   "market",
+   "mutuel",
+   "pari",
+   "pari-mutuel",
+   "wager"
+  ]
+ },
+ "C-56": {
+  "title": "A Hierarchical Process Execution Support for Grid Computing Fábio R. L.",
+  "title_stems": [
+   "comput",
+   "execut",
+   "fbio",
+   "grid",
+   "hierarch",
+   "process",
+   "support"
+  ]
+ },
+ "H-54": {
+  "title": "Knowledge-intensive Conceptual Retrieval and Passage Extraction of Biomedical Literature Wei",
+  "title_stems": [
+   "biomed",
+   "conceptu",
+   "extract",
+   "intens",
+   "knowledg",
+   "knowledge-intens",
+   "literatur",
+   "passag",
+   "retriev",
+   "wei"
+  ]
+ },
+ "J-35": {
+  "title": "Efficiency and Nash Equilibria in a Scrip System for P2P Networks Eric J. Friedman School of Operations Research and Industrial Engineering Cornell University",
+  "title_stems": [
+   "cornel",
+   "effici",
+   "engin",
+   "equilibria",
+   "eric",
+   "friedman",
+   "industri",
+   "nash",
+   "network",
+   "oper",
+   "p2p",
+   "research",
+   "school",
+   "scrip",
+   "system",
+   "univers"
+  ]
+ },
+ "C-71": {
+  "title": "A Point-Distribution Index and Its Application to Sensor-Grouping in Wireless Sensor Networks Yangfan Zhou Haixuan Yang Michael R. Lyu Edith C.-H.",
+  "title_stems": [
+   "applic",
+   "c-h",
+   "distribut",
+   "edith",
+   "group",
+   "haixuan",
+   "index",
+   "lyu",
+   "michael",
+   "network",
+   "point",
+   "point-distribut",
+   "sensor",
+   "sensor-group",
+   "wireless",
+   "yang",
+   "yangfan",
+   "zhou"
+  ]
+ },
+ "I-60": {
+  "title": "On the Benefits of Cheating by Self-Interested Agents in Vehicular Networks∗ Raz Lin and",
+  "title_stems": [
+   "agent",
+   "benefit",
+   "cheat",
+   "interest",
+   "lin",
+   "network",
+   "raz",
+   "self",
+   "self-interest",
+   "vehicular"
+  ]
+ },
+ "I-71": {
+  "title": "A Formal Model for Situated Semantic Alignment Manuel Atencia",
+  "title_stems": [
+   "align",
+   "atencia",
+   "formal",
+   "manuel",
+   "model",
+   "semant",
+   "situat"
+  ]
+ },
+ "C-69": {
+  "title": "pTHINC: A Thin-Client Architecture for Mobile Wireless Web Joeng Kim, Ricardo A. Baratto, and Jason",
+  "title_stems": [
+   "architectur",
+   "baratto",
+   "client",
+   "jason",
+   "joeng",
+   "kim",
+   "mobil",
+   "pthinc",
+   "ricardo",
+   "thin",
+   "thin-client",
+   "web",
+   "wireless"
+  ]
+ },
+ "H-40": {
+  "title": "Cross-Lingual Query Suggestion Using Query Logs of Different Languages Wei Gao1* , Cheng Niu2 , Jian-Yun Nie3 , Ming Zhou2 , Jian Hu2 , Kam-Fai Wong1 , Hsiao-Wuen Hon2 1",
+  "title_stems": [
+   "cheng",
+   "cross",
+   "cross-lingu",
+   "differ",
+   "fai",
+   "gao1",
+   "hon2",
+   "hsiao",
+   "hsiao-wuen",
+   "hu2",
+   "jian",
+   "jian-yun",
+   "kam",
+   "kam-fai",
+   "languag",
+   "lingual",
+   "log",
+   "ming",
+   "nie3",
+   "niu2",
+   "queri",
+   "suggest",
+   "wei",
+   "wong1",
+   "wuen",
+   "yun",
+   "zhou2"
+  ]
+ },
+ "J-57": {
+  "title": "Marginal Contribution Nets: A Compact Representation Scheme for Coalitional Games ∗ Samuel",
+  "title_stems": [
+   "coalit",
+   "compact",
+   "contribut",
+   "game",
+   "margin",
+   "net",
+   "represent",
+   "samuel",
+   "scheme"
+  ]
+ },
+ "I-72": {
+  "title": "Learning Consumer Preferences Using Semantic Similarity ∗",
+  "title_stems": [
+   "consum",
+   "learn",
+   "prefer",
+   "semant",
+   "similar"
+  ]
+ },
+ "H-82": {
+  "title": "Downloading Textual Hidden Web Content Through Keyword Queries Alexandros",
+  "title_stems": [
+   "alexandro",
+   "content",
+   "download",
+   "hidden",
+   "keyword",
+   "queri",
+   "textual",
+   "web"
+  ]
+ },
+ "I-42": {
+  "title": "A Complete Distributed Constraint Optimization Method For Non-Traditional Pseudotree Arrangements∗ James",
+  "title_stems": [
+   "arrang",
+   "complet",
+   "constraint",
+   "distribut",
+   "jame",
+   "method",
+   "non",
+   "non-tradit",
+   "optim",
+   "pseudotre",
+   "tradit"
+  ]
+ },
+ "C-54": {
+  "title": "Remote Access to Large Spatial Databases ∗",
+  "title_stems": [
+   "access",
+   "databas",
+   "larg",
+   "remot",
+   "spatial"
+  ]
+ },
+ "H-62": {
+  "title": "Implicit User Modeling for Personalized Search Xuehua Shen, Bin Tan,",
+  "title_stems": [
+   "bin",
+   "implicit",
+   "model",
+   "person",
+   "search",
+   "shen",
+   "tan",
+   "user",
+   "xuehua"
+  ]
+ },
+ "I-54": {
+  "title": "Approximate and Online Multi-Issue Negotiation",
+  "title_stems": [
+   "approxim",
+   "issu",
+   "multi",
+   "multi-issu",
+   "negoti",
+   "onlin"
+  ]
+ },
+ "J-50": {
+  "title": "Communication Complexity of Common Voting Rules∗ Vincent",
+  "title_stems": [
+   "common",
+   "commun",
+   "complex",
+   "rule",
+   "vincent",
+   "vote"
+  ]
+ },
+ "J-59": {
+  "title": "Cost Sharing in a Job Scheduling Problem Using the Shapley Value Debasis",
+  "title_stems": [
+   "cost",
+   "debasi",
+   "job",
+   "problem",
+   "schedul",
+   "shapley",
+   "share",
+   "valu"
+  ]
+ },
+ "C-76": {
+  "title": "Assured Service Quality by Improved Fault Management Service-Oriented Event Correlation Andreas",
+  "title_stems": [
+   "andrea",
+   "assur",
+   "correl",
+   "event",
+   "fault",
+   "improv",
+   "manag",
+   "orient",
+   "qualiti",
+   "servic",
+   "service-ori"
+  ]
+ },
+ "C-79": {
+  "title": "A Cross-Layer Approach to Resource Discovery and Distribution in Mobile ad-hoc Networks Chaiporn Jaikaeo Computer Engineering Kasetsart University, Thailand (+662) 942-8555 Ext 1424",
+  "title_stems": [
+   "1424",
+   "662",
+   "8555",
+   "942",
+   "942-8555",
+   "ad",
+   "ad-hoc",
+   "approach",
+   "chaiporn",
+   "comput",
+   "cross",
+   "cross-lay",
+   "discoveri",
+   "distribut",
+   "engin",
+   "ext",
+   "hoc",
+   "jaikaeo",
+   "kasetsart",
+   "layer",
+   "mobil",
+   "network",
+   "resourc",
+   "thailand",
+   "univers"
+  ]
+ },
+ "I-64": {
+  "title": "Organizational Self-Design in Semi-dynamic Environments Sachin Kamboj ∗ and Keith S.",
+  "title_stems": [
+   "design",
+   "dynam",
+   "environ",
+   "kamboj",
+   "keith",
+   "organiz",
+   "sachin",
+   "self",
+   "self-design",
+   "semi",
+   "semi-dynam"
+  ]
+ },
+ "C-58": {
+  "title": "A Scalable Distributed Information Management System∗",
+  "title_stems": [
+   "distribut",
+   "inform",
+   "manag",
+   "scalabl",
+   "system"
+  ]
+ },
+ "I-61": {
+  "title": "Distributed Agent-Based Air Traffic Flow Management",
+  "title_stems": [
+   "agent",
+   "agent-bas",
+   "air",
+   "distribut",
+   "flow",
+   "manag",
+   "traffic"
+  ]
+ },
+ "H-98": {
+  "title": "Using Asymmetric Distributions to Improve Text Classifier Probability Estimates Paul N.",
+  "title_stems": [
+   "asymmetr",
+   "classifi",
+   "distribut",
+   "estim",
+   "improv",
+   "paul",
+   "probabl",
+   "text"
+  ]
+ },
+ "I-57": {
+  "title": "Rumours and Reputation: Evaluating Multi-Dimensional Trust within a Decentralised Reputation System Steven Reece1 , Alex Rogers2 , Stephen Roberts1 and Nicholas R.",
+  "title_stems": [
+   "alex",
+   "decentralis",
+   "dimension",
+   "evalu",
+   "multi",
+   "multi-dimension",
+   "nichola",
+   "reece1",
+   "reput",
+   "roberts1",
+   "rogers2",
+   "rumour",
+   "stephen",
+   "steven",
+   "system",
+   "trust",
+   "within"
+  ]
+ },
+ "J-47": {
+  "title": "On the Computational Power of Iterative Auctions∗ [Extended Abstract]",
+  "title_stems": [
+   "abstract",
+   "auction",
+   "comput",
+   "extend",
+   "iter",
+   "power"
+  ]
+ },
+ "C-68": {
+  "title": "An Evaluation of Availability Latency in Carrier-based Vehicular ad-hoc Networks",
+  "title_stems": [
+   "ad",
+   "ad-hoc",
+   "avail",
+   "carrier",
+   "carrier-bas",
+   "evalu",
+   "hoc",
+   "latenc",
+   "network",
+   "vehicular"
+  ]
+ },
+ "J-49": {
+  "title": "Information Markets vs. Opinion Pools: An Empirical Comparison Yiling",
+  "title_stems": [
+   "comparison",
+   "empir",
+   "inform",
+   "market",
+   "opinion",
+   "pool",
+   "vs",
+   "yile"
+  ]
+ },
+ "C-84": {
+  "title": "Selfish Caching in Distributed Systems: A Game-Theoretic Analysis Byung-Gon",
+  "title_stems": [
+   "analysi",
+   "byung",
+   "byung-gon",
+   "cach",
+   "distribut",
+   "game",
+   "game-theoret",
+   "gon",
+   "selfish",
+   "system",
+   "theoret"
+  ]
+ },
+ "H-64": {
+  "title": "Machine Learning for Information Architecture in a Large Governmental Website ∗ Miles Efron School of Information & Library Science CB#3360, 100 Manning Hall University of North Carolina Chapel Hill, NC 27599-3360",
+  "title_stems": [
+   "100",
+   "27599",
+   "27599-3360",
+   "3360",
+   "architectur",
+   "carolina",
+   "cb3360",
+   "chapel",
+   "efron",
+   "government",
+   "hall",
+   "hill",
+   "inform",
+   "larg",
+   "learn",
+   "librari",
+   "machin",
+   "man",
+   "mile",
+   "nc",
+   "north",
+   "school",
+   "scienc",
+   "univers",
+   "websit"
+  ]
+ },
+ "C-42": {
+  "title": "Demonstration of Grid-Enabled Ensemble Kalman Filter Data Assimilation Methodology for Reservoir Characterization",
+  "title_stems": [
+   "assimil",
+   "character",
+   "data",
+   "demonstr",
+   "enabl",
+   "ensembl",
+   "filter",
+   "grid",
+   "grid-en",
+   "kalman",
+   "methodolog",
+   "reservoir"
+  ]
+ },
+ "C-53": {
+  "title": "Globally Synchronized Dead-Reckoning with Local Lag for Continuous Distributed Multiplayer Games Yi Zhang1 , Ling Chen1, 2 , Gencai Chen1 1College of Computer",
+  "title_stems": [
+   "1colleg",
+   "chen1",
+   "comput",
+   "continu",
+   "dead",
+   "dead-reckon",
+   "distribut",
+   "game",
+   "gencai",
+   "global",
+   "lag",
+   "ling",
+   "local",
+   "multiplay",
+   "reckon",
+   "synchron",
+   "yi",
+   "zhang1"
+  ]
+ },
+ "I-51": {
+  "title": "Learning and Joint Deliberation through Argumentation in Multi-Agent Systems",
+  "title_stems": [
+   "agent",
+   "argument",
+   "deliber",
+   "joint",
+   "learn",
+   "multi",
+   "multi-ag",
+   "system"
+  ]
+ },
+ "J-38": {
+  "title": "Multi-Attribute Coalitional Games∗ Samuel",
+  "title_stems": [
+   "attribut",
+   "coalit",
+   "game",
+   "multi",
+   "multi-attribut",
+   "samuel"
+  ]
+ },
+ "I-77": {
+  "title": "The LOGIC Negotiation Model Carles",
+  "title_stems": [
+   "carl",
+   "logic",
+   "model",
+   "negoti"
+  ]
+ },
+ "C-41": {
+  "title": "Evaluating Adaptive Resource Management for Distributed Real-Time Embedded Systems Nishanth Shankaran, ∗ Xenofon Koutsoukos, Douglas C. Schmidt, and",
+  "title_stems": [
+   "adapt",
+   "distribut",
+   "dougla",
+   "embed",
+   "evalu",
+   "koutsouko",
+   "manag",
+   "nishanth",
+   "real",
+   "real-tim",
+   "resourc",
+   "schmidt",
+   "shankaran",
+   "system",
+   "time",
+   "xenofon"
+  ]
+ },
+ "H-90": {
+  "title": "Context-Sensitive Information Retrieval Using Implicit Feedback",
+  "title_stems": [
+   "context",
+   "context-sensit",
+   "feedback",
+   "implicit",
+   "inform",
+   "retriev",
+   "sensit"
+  ]
+ },
+ "H-77": {
+  "title": "Automatic Extraction of Titles from General Documents using Machine Learning",
+  "title_stems": [
+   "automat",
+   "document",
+   "extract",
+   "gener",
+   "learn",
+   "machin",
+   "titl"
+  ]
+ },
+ "J-69": {
+  "title": "Robust Incentive Techniques for Peer-to-Peer Networks Michal Feldman1",
+  "title_stems": [
+   "feldman1",
+   "incent",
+   "michal",
+   "network",
+   "peer",
+   "peer-to-p",
+   "robust",
+   "techniqu"
+  ]
+ }
+}

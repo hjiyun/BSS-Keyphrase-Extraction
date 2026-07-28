@@ -214,7 +214,7 @@ def main():
         minima = draw_landscape(ax, theta_grid, E_grid, sc, sc["name"])
         fig.text(
             0.5, 0.02,
-            "▼ = local minimum  |  음영 = S/W/N basin  |  log-sum-exp mixture",
+            "▼ = local minimum  |  shading = S/W/N basins  |  log-sum-exp mixture",
             ha="center", fontsize=9, color="gray",
         )
         fig.subplots_adjust(left=0.08, right=0.97, top=0.90, bottom=0.13)
@@ -238,13 +238,9 @@ def main():
     for ax, sc in zip(axes.flat, SCENARIOS):
         draw_landscape(ax, theta_grid, E_per_scenario[sc["name"]], sc,
                        sc["name"], show_xlabel=True)
-    fig.suptitle(
-        "Study 1A — Per-scenario posterior energy landscape (3-mode mixture)",
-        fontsize=12, fontweight="bold", y=0.995,
-    )
     fig.text(
         0.5, 0.005,
-        "▼ = local minimum  |  음영 = S/W/N basin  |  log-sum-exp mixture posterior",
+        "▼ = local minimum  |  shading = S/W/N basins  |  log-sum-exp mixture posterior",
         ha="center", fontsize=9, color="gray",
     )
     fig.subplots_adjust(left=0.06, right=0.98, top=0.93, bottom=0.06,

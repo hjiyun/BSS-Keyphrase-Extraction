@@ -104,16 +104,12 @@ for i in range(K - 1):
     a, b = center_x[i], center_x[i + 1]
     m = (xs >= a) & (xs <= b)
     j = np.argmax(np.where(m, E, -np.inf))
-    ax.annotate(f"장벽 {bars[i]:.1f}", (xs[j], E[j]), textcoords='offset points',
+    ax.annotate(f"barrier {bars[i]:.1f}", (xs[j], E[j]), textcoords='offset points',
                 xytext=(0, 14), ha='center', fontsize=10.5, fontweight='bold', color=INK,
                 bbox=dict(fc='white', ec='#d8d8d8', boxstyle='round,pad=0.28', alpha=0.92))
 
-ax.set_xlabel('문서 중심을 잇는 경로 좌표', color=MUT)
+ax.set_xlabel('path coordinate along document centers', color=MUT)
 ax.set_ylabel('Energy  $U_{mix}(\\theta) = -\\log\\sum_k e^{-U_k(\\theta)}$', color=MUT)
-ax.set_title("Study 3 Target — 실데이터 기반 local trap 에너지 지형\n"
-             f"Hulth {K}문서, 중심 = 문서별 TextRank(실산출),  "
-             f"$\\sigma^2$={SIG2},  baseline={TB.BASELINE}  —  ▼ local min",
-             fontsize=12.5, fontweight='bold', color=INK)
 ax.set_xlim(xs.min(), xs.max())
 ax.set_ylim(E.min() - 0.13 * np.ptp(E), E.max() + 0.16 * np.ptp(E))
 ax.grid(alpha=0.18, lw=0.6); ax.set_axisbelow(True)

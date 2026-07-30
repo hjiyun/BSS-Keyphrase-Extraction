@@ -71,6 +71,40 @@ def awsgld(U, gU, mode, ini, seed, T, P, L, TAU=1.0, ZETA=5.0, eps0=0.1,
                 boundary_rate=nboundary / max(T - warmup, 1))
 
 
+def sgld_family(method, U, gU, mode, ini, seed, T, P, L, TAU=1.0, base_lr=1.0,
+                friction=0.1, cyc_cycles=10):
+    """study_1a/1b sgld_only.py 의 SGLD 계열을 trap(U_mix, gU) 위로 이식.
+    규칙 그대로: qSGLD 만 전처리(P,L), SGLD/cycSGLD/SGHMC 는 무전처리.
+    U/gU 는 이미 /TAU 된 함수(=exp(-U_raw/TAU) 타깃). noise sqrt(2·TAU·eps)."""
+    rng = np.random.RandomState(seed)
+    n = len(ini); th = ini.copy()
+    ths = np.zeros((T, n)); mo = np.zeros(T, dtype=np.int8)
+    v = np.zeros(n)
+    for t in range(T):
+        g = gU(th)
+        if method == "SGLD":
+            eps = base_lr / ((t + 1) ** 0.6 + 10.0)
+            th = th - eps * g + np.sqrt(2.0 * TAU * eps) * rng.randn(n)
+        elif method == "qSGLD":
+            eps = base_lr / ((t + 1) ** 0.6 + 10.0)
+            th = th - eps * (P @ g) + np.sqrt(2.0 * TAU * eps) * (L @ rng.randn(n))
+        elif method == "cycSGLD":
+            cyc = max(1, T // cyc_cycles); beta = (t % cyc) / cyc
+            eps = base_lr / 2.0 * (np.cos(np.pi * min(beta, 0.8)) + 1.0)
+            tau_k = TAU if beta >= 0.8 else TAU / 1e4
+            th = th - eps * g + np.sqrt(2.0 * tau_k * eps) * rng.randn(n)
+        elif method == "SGHMC":
+            eta = base_lr / ((t + 1) ** 0.6 + 10.0)
+            th = th + v
+            v = ((1.0 - friction) * v - eta * g
+                 + np.sqrt(2.0 * friction * eta * TAU) * rng.randn(n))
+        else:
+            raise ValueError(method)
+        th = np.clip(th, -700, 700)
+        ths[t] = th; mo[t] = mode(th)
+    return dict(theta=ths, mode=mo)
+
+
 def summarize(res, K, burn, ini_mode):
     """모드 방문/탈출 요약."""
     mo = res['mode'][burn:]

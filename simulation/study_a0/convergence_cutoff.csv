@@ -1,0 +1,7 @@
+method,seed,rhat_conv_iter,cutoff_energy,rhat_final,ess,plateau_iter
+AWSGLD,0,4083,302.0,1.145,25.36,794
+AWSGLD,1,4266,328.9,1.142,25.39,1066
+AWSGLD,2,3533,305.6,1.139,27.71,912
+cycSGLD,0,,263.7,3.753,8.67,303
+cycSGLD,1,,271.0,3.392,7.72,305
+cycSGLD,2,,262.5,2.44,7.04,304

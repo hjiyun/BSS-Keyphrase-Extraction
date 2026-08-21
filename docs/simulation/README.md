@@ -16,6 +16,7 @@ Wang et al. (2023)의 Bayesian Semi-supervised (BSS) 키프레이즈 추출에�
 | [Study 1C](study_1c.md) | 규모(n=200/1500/10000) × 다중 seed — 결론의 견고성 | 합성 |
 | [Study 2](study_2.md) | 실 키프레이즈 데이터 벤치마크 + 다봉성 진단 + 합성 트랩 | Hulth, SemEval |
 | [Study 3](study_3.md) | 실데이터로 구성한 local trap에서의 acMH vs AWSGLD | Hulth |
+| [파라미터 정리](parameters.md) | 폴더별 스크립트·목적·파라미터·산출물 참조표 | — |
 
 ## 이야기의 흐름
 

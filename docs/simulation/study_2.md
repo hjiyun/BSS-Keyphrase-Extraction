@@ -111,6 +111,29 @@ ROC AUC와 PR 곡선에서도 이긴다. 즉 dense 우위는 cutoff 선택의 ar
 - τ(1.0/1.5/2.0), ζ(1/5/10), DECAY_LR(100/200), eps(1.0/2.0) 스윕에서 γ=0.20 F는
   0.5965~0.6155 범위로, **하이퍼파라미터에 둔감하다.** dense 우위가 튜닝의 산물이 아님을 뜻한다.
 
+**6 샘플러 통일 비교 (`dense_allsamplers.py`, N_SIM = 30)**
+
+같은 dense 5문서에 SGLD 계열 4종을 추가해 6 샘플러를 한 표로 비교한다. pooled 집계,
+top-k는 문서별 top-20 macro 평균. 실 키프레이즈 사후분포는 **단봉**이므로 Basins/Escape는
+정의되지 않고, 순위·추출 지표만 본다.
+
+| 샘플러 | P@20 | R@20 | F@20 | ROC AUC | NDCG@20 |
+|---|---|---|---|---|---|
+| **AWSGLD** | **0.849** | **0.414** | **0.555** | **0.685** | **0.850** |
+| cycSGLD | 0.813 | 0.398 | 0.533 | 0.671 | 0.836 |
+| acMH | 0.802 | 0.391 | 0.524 | 0.650 | 0.838 |
+| SGLD | 0.759 | 0.370 | 0.496 | 0.626 | 0.803 |
+| qSGLD | 0.731 | 0.356 | 0.478 | 0.611 | 0.761 |
+| SGHMC | 0.718 | 0.350 | 0.469 | 0.593 | 0.753 |
+
+- **AWSGLD가 P@20·R@20·F@20·ROC AUC·NDCG@20 5개 종합 지표 전부 6 샘플러 중 1위**다.
+  합성 트랩(§3)에서 cycSGLD와 대등했던 것과 달리, **자연 단봉 실데이터에서는 AWSGLD가 단독 우위**다.
+  데이터·하이퍼파라미터 조작 없이 얻은 결과다.
+- 단, γ별 세부에서는 트레이드오프가 있다 (`dense_allsamplers.csv`): **precision·실현 FDR은 cycSGLD·acMH**가
+  더 좋고(적게·정확하게 선택), **recall은 AWSGLD가 압도**한다(γ=0.30에서 R 0.949 vs cycSGLD 0.681).
+  낮은 γ(0.05~0.10)의 F는 SGLD가 앞선다. 종합 지표(F/AUC/NDCG)에서 AWSGLD가 이기되, "모든 세부
+  지표 1위"는 아니라는 점을 병기한다.
+
 ### 1.5 dense 랜덤 5문서 심화 (`hulth_*.py`)
 
 고정 시드(20260711)로 dense 풀에서 무작위 추출한 5문서(240 / 275 / 333 / 404 / 2000),
@@ -338,6 +361,7 @@ python3 data_JOC/build_baseline.py
 python3 simulation/study_2/acmh_vs_awsgld_4to10.py       # 126문서 (--probe 로 타이밍만)
 python3 simulation/study_2/dense_test.py
 python3 simulation/study_2/dense_paper_eval.py           # 원논문 pooled 집계 + ROC/PR
+python3 simulation/study_2/dense_allsamplers.py          # dense 6 샘플러 통일 비교 (~48분)
 python3 simulation/study_2/dense_minibatch.py
 python3 simulation/study_2/dense_hp_tune.py
 python3 simulation/study_2/hulth_rand5_bench.py
@@ -365,6 +389,7 @@ python3 simulation/study_2/trap_consensus_words.py       # 선택 단어 확인
 |---|---|
 | `archive/acmh_vs_awsgld_4to10_{summary.json,by_gamma.csv,results.jsonl}` | 126문서 벤치마크 |
 | `dense_test.csv`, `dense_paper_eval.csv` | dense 5문서 macro / pooled 평가 |
+| `dense_allsamplers.py`, `dense_allsamplers_summary.csv`, `dense_allsamplers.csv` | dense 6 샘플러 통일 비교 (P/R/F@20 + AUC + NDCG@20, γ별 P/R/F/FDR) |
 | `dense_minibatch.csv`, `dense_hp_tune.csv` | batch·하이퍼파라미터 ablation |
 | `hulth_rand5_bench.csv`, `hulth_zeta_tune.csv`, `hulth_eps_tune.csv`, `hulth_final_bench.csv`, `hulth_bygamma.csv`, `hulth_weak.csv` | dense 랜덤 5문서 심화 |
 | `semeval_long5.csv` | SemEval-2010 장문 5편 |

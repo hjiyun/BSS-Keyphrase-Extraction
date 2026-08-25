@@ -62,13 +62,25 @@ simulation/
 │   ├── awsgld_convergence.py        AWSGLD vs SGHMC 4-panel 수렴 진단 (보고서 범위 밖)
 │   └── archive/                     이전 중간 산출물 (근거 파일 2개만 git 추적)
 │
-└── study_3/                       Study 3 — 실데이터로 구성한 local trap
-    ├── trap_build.py                문서별 TextRank 해를 mode 중심으로 트랩 구성·검증
-    ├── trap_landscape.py  trap10_landscape.py   3문서 / 10문서 에너지 지형
-    ├── trap_samplers.py             동일 타깃·온도·기하에서 acMH vs AWSGLD
-    ├── tune.py  tune10.py  recall_tune.py       하이퍼파라미터 스캔
-    ├── run_experiment.py            3문서 탐색·탈출
-    └── run_metrics.py  run10_metrics.py         3문서 / 10문서 전 지표
+├── study_3/                       Study 3 — 실데이터로 구성한 local trap
+│   ├── trap_build.py                문서별 TextRank 해를 mode 중심으로 트랩 구성·검증
+│   ├── trap_landscape.py  trap10_landscape.py   3문서 / 10문서 에너지 지형
+│   ├── trap_samplers.py             동일 타깃·온도·기하에서 acMH vs AWSGLD
+│   ├── tune.py  tune10.py  recall_tune.py       하이퍼파라미터 스캔
+│   ├── run_experiment.py            3문서 탐색·탈출
+│   └── run_metrics.py  run_metrics_all.py       3문서 / 10문서 전 지표 (6 sampler)
+│
+├── study_a0/                      Study A0 — 원본 U(θ) 정밀 비교 (mixture 배제)
+│   ├── energy_diagnostics.py        공통 에너지 진단 (볼록성·partition 방문)
+│   ├── recovery_sampling_figs.py    복원 산점도 + 샘플링 품질 4지표
+│   ├── multiseed_1b.py              멀티시드 평균 집계
+│   ├── cyc_awsgld_bss.py            cyc-AWSGLD를 BSS 에너지에서 시험
+│   ├── convergence_cutoff.py  cutoff_derivation.py   R̂ 수렴 → cut-off=312 도출
+│   └── strip6_cutoff.py             6-sampler Lowest-U(cut-off 클램프) + ESS
+│
+└── study_opt/                     전역최적화 벤치마크 (rugged 대조군)
+    ├── rastrigin_global_opt.py  global_opt_suite.py  Rastrigin/Ackley/Griewank
+    └── cyc_awsgld_test.py           Rastrigin에서 cyc-AWSGLD (AWSGLD가 유일하게 강한 지형)
 ```
 
 ## 비교 샘플러
@@ -264,6 +276,32 @@ Study 2 의 합성 트랩은 mode 중심을 사람이 지정했다는 한계가 
   갇힌 basin 의 비키워드에 확신을 부여해 FDR 을 크게 위반한다.
 - 한계: 중심은 실데이터 산출값이지만 `BASELINE=−2.0`, `σ²=0.5` 는 다봉 형성을 위해 고른 값이다
   (초기 스캔 `BASELINE=−0.5` 에서는 basin 이 뭉개졌다). 인위성이 완전히 제거되지는 않았다.
+
+## Study A0 — 원본 U(θ) 정밀 비교 ([상세](docs/simulation/study_a0.md))
+
+*2026-08-25 추가.* 시각화용 mixture 지형을 배제하고 **원래의 BSS 사후 에너지 U(θ) 그 자체**만을
+대상으로 6 샘플러를 다시 비교했다. Study 1B와 같은 실데이터(n=400)를 쓴다.
+
+- **U(θ)는 볼록이다.** 고정 (α,σ²)에서 Hessian 최소고유값이 모든 점에서 양수(+0.88). prior(볼록
+  2차식) + likelihood(로지스틱 음의로그우도, 볼록) = 볼록. **데이터를 어떻게 바꿔도 로컬 트랩을
+  만들 수 없다** (차원 수와 무관 — 트랩은 곡률 부호가 뒤집혀야 생긴다). → **min-U 는 잘못된 지표.**
+- **정직한 축은 복원(MSE·Spearman·NDCG)·수렴(R̂)·효율(ESS).** 여기서 AWSGLD 가 유일하게 R̂<1.2 로
+  수렴하고 ESS 가 압도적이다.
+
+| 샘플러 | Spearman ↑ | MSE ↓ | R̂ max ↓ | ESS ↑ |
+|---|---:|---:|---:|---:|
+| cycSGLD | 0.692 | **1.27** | 5.09 (미수렴) | 4.7 |
+| **AWSGLD** | **0.697** | 1.38 | **1.15** | **25.2** |
+
+- **cut-off 는 수렴 지표가 정한다.** running R̂max<1.2 로 수렴한 유일한 샘플러(AWSGLD)가 정착한
+  정상상태 에너지 = **312.2 ± 11.9** → cut-off = 312. cycSGLD 는 R̂ 3.2~3.8 로 미수렴이라 자격이 없다.
+- **cut-off 에서 멈춘 6-sampler strip**: 도달한 4개(acMH·qSGLD·cycSGLD·AWSGLD)는 Lowest-U 축에서
+  cut-off(312)에 **동률** → 에너지로는 구분 불가. 반면 **ESS 는 AWSGLD 26.4 로 압도**(cycSGLD 4.7 의 5.6배).
+- cyc-AWSGLD 를 BSS 에서 시험해도 이득 없음(MSE 1.60 > AWSGLD 1.32) — cyc 의 가치는 rugged 전용이라
+  볼록 BSS 에선 냉각 collapse 만 유발한다.
+
+> **결론: 원본 BSS 에너지는 볼록 그릇 하나 → 트랩·min-U 무의미. 실력은 복원·수렴·효율로 재야 하며,
+> 그 축들에서 AWSGLD 가 유일하게 수렴하고 ESS 가 2~5배 높아 명백히 앞선다.**
 
 ## 지표 정의
 

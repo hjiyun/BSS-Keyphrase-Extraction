@@ -7,6 +7,11 @@ Wang et al. (2023)의 Bayesian Semi-supervised (BSS) 키프레이즈 추출에�
 문서는 **디스크에 저장된 산출물(JSON / CSV / npz / log)을 근거로만** 작성했다.
 근거 파일이 없던 항목은 재실행해 채웠고, 그 사실을 각 문서에 명시했다.
 
+> **2026-08-25 업데이트** — [Study A0](study_a0.md) 추가: mixture 시각화를 배제하고 **원본 BSS
+> 에너지 U(θ) 그 자체**만을 대상으로 6 샘플러를 정밀 비교했다. U(θ)가 볼록(Hessian>0)임을
+> 증명해 "min-U는 잘못된 지표"임을 확정하고, 정직한 축(복원·수렴 R̂·효율 ESS)과 수렴 지표가
+> 정하는 cut-off(=312)를 정립했다. 관련 실험은 `simulation/study_a0/`.
+
 ## 문서
 
 | 문서 | 다루는 것 | 데이터 |
@@ -16,6 +21,7 @@ Wang et al. (2023)의 Bayesian Semi-supervised (BSS) 키프레이즈 추출에�
 | [Study 1C](study_1c.md) | 규모(n=200/1500/10000) × 다중 seed — 결론의 견고성 | 합성 |
 | [Study 2](study_2.md) | 실 키프레이즈 데이터 벤치마크 + 다봉성 진단 + 합성 트랩 | Hulth, SemEval |
 | [Study 3](study_3.md) | 실데이터로 구성한 local trap에서의 acMH vs AWSGLD | Hulth |
+| [Study A0](study_a0.md) | **원본 U(θ) 정밀 비교** — 볼록성 증명·정직한 지표·수렴 기반 cut-off | 실데이터 (n=400) |
 | [파라미터 정리](parameters.md) | 폴더별 스크립트·목적·파라미터·산출물 참조표 | — |
 
 ## 이야기의 흐름
@@ -77,6 +83,8 @@ Wang et al. (2023)의 Bayesian Semi-supervised (BSS) 키프레이즈 추출에�
 | 2 | dense·희소관측에서는 γ 무관하게 우위 | ROC AUC 0.693 vs 0.664 (pooled) |
 | 2 | consensus형 트랩에서 acMH 완전 실패 | top-5 precision 0.000 vs 0.600 |
 | 3 | 실데이터 지형에서 acMH는 탈출 불가 | 탈출율 0.00 vs 0.80, P@20 0.555 → 0.745 |
+| A0 | **원본 U(θ)는 볼록** — min-U는 무의미, ESS로 AWSGLD 압도 | Hessian min eig +0.88, ESS 26.4 vs 4.7(cyc) |
+| A0 | cut-off는 수렴 지표(R̂<1.2)가 정한다 | cut-off = 312.2±11.9 (AWSGLD만 수렴) |
 
 ## 설계 원칙 (`CLAUDE.md` 금지 사항)
 

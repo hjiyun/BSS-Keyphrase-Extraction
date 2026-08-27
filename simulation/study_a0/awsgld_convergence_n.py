@@ -83,18 +83,20 @@ def run(method, ini, Y, B, u_0, a0, n, BtB, P, Lc, seed):
 
 
 def rhat_w(chains, Jchains, aw, lo, hi, weighted):
-    means = []; withins = []
+    """split-R̂: [lo:hi] 를 반으로 갈라 2M sub-chain. AWSGLD 는 π-가중."""
+    means = []; withins = []; L = hi - lo; h = L // 2; hL = h
     for ci, c in enumerate(chains):
-        post = c[lo:hi]
-        if weighted:
-            Jp = Jchains[ci][lo:hi]; w = aw[Jp].copy(); w[Jp >= M_REG - 1] = 0.0; sw = w.sum()
-            m = (w[:, None] * post).sum(0) / sw; v = (w[:, None] * (post - m) ** 2).sum(0) / sw
-        else:
-            m = post.mean(0); v = post.var(0, ddof=1)
-        means.append(m); withins.append(v)
-    means = np.array(means); withins = np.array(withins); M = len(chains); L = hi - lo
-    gm = means.mean(0); Bo = ((means - gm) ** 2).sum(0) / (M - 1); W = withins.mean(0)
-    R = np.sqrt(np.clip(((L - 1) / L * W + Bo) / np.maximum(W, 1e-12), 0, None))
+        for a, b in ((lo, lo + h), (lo + h, lo + 2 * h)):
+            post = c[a:b]
+            if weighted:
+                Jp = Jchains[ci][a:b]; w = aw[Jp].copy(); w[Jp >= M_REG - 1] = 0.0; sw = w.sum()
+                m = (w[:, None] * post).sum(0) / sw; v = (w[:, None] * (post - m) ** 2).sum(0) / sw
+            else:
+                m = post.mean(0); v = post.var(0, ddof=1)
+            means.append(m); withins.append(v)
+    means = np.array(means); withins = np.array(withins); M2 = len(means)
+    gm = means.mean(0); Bo = ((means - gm) ** 2).sum(0) / (M2 - 1); W = withins.mean(0)
+    R = np.sqrt(np.clip(((hL - 1) / hL * W + Bo) / np.maximum(W, 1e-12), 0, None))
     return float(np.nanmax(R)), float(np.median(R))
 
 

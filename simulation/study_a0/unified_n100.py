@@ -1,10 +1,8 @@
-"""n=100 종합 지표표 — 6 샘플러 전체, 정직한 기준.
-
-AWSGLD: π-가중(w=G[J]) 추정량으로 복원·R̂ 계산 + Kong ESS. 나머지: π 직접이라 raw.
-과분산 3-chain(μ_N/μ_W/μ_S), T=10000. 데이터는 Study 1B 구성으로 n=100 새로 생성.
-
-지표: Spearman / MSE / NDCG@10 (복원) | R̂max / R̂median (수렴) | ESS(자기상관) | KongESS(AWSGLD)
-출력: full_metrics_n100.csv + 콘솔표
+"""통합 종합표 — 전 지표를 4-chain × seed0 단일 setup에서 계산.
+Spearman/MSE/NDCG@50 | split-R̂ (median/q95/max) | ESS | Lowest U / Reached.
+cutoff = 이 setup 에서 AWSGLD 정상상태 에너지(post-burn median, 4체인 median).
+AWSGLD 는 R̂·복원에 π-가중, 나머지 raw. 에너지(min U)는 전부 raw 궤적.
+출력: unified_n100.csv + 콘솔.
 """
 import os, sys, time, csv
 import numpy as np
@@ -18,15 +16,14 @@ from local_trap_landscape import PARAMS
 from extra_metrics import ess_per_node
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-N = 100
-E.T = 20000; E.BURN = 2000; E.BATCH = 50
-T = E.T; BURN = E.BURN; BATCH = E.BATCH; FLOOR = 1.0
+N = 100; E.T = 20000; E.BURN = 2000; E.BATCH = 50
+T = E.T; BURN = E.BURN; FLOOR = 1.0
 M_REG = kfa.M_REGIONS; ZETA = kfa.ZETA; TAU = kfa.TAU; DECAY = kfa.DECAY_LR
-SEED = 0; INITS = [-0.8, 1.0, 2.5, "rand"]  # 4-chain (과분산 3 + 랜덤)
-METHODS = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
+SEED = 0; INITS = [-0.8, 1.0, 2.5, "rand"]
+METHODS = ["acMH", "SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
 
 
-def gen_data(n, seed):
+def gen(n, seed):
     rng = np.random.default_rng(seed)
     z, _ = DG.assign_groups(n, (PARAMS["rho_S"], PARAMS["rho_W"], PARAMS["rho_N"]), rng)
     ts = DG.sample_theta_star(z, PARAMS, rng)
@@ -34,7 +31,7 @@ def gen_data(n, seed):
     Y, _ = DG.apply_label_conflict(Yc, z, DG.FLIP_RATE_S_TO_0, DG.FLIP_RATE_N_TO_1, rng)
     A = DG.build_sbm_graph(z, DG.P_IN, DG.P_OUT, rng)
     B, u_0, _ = DG.build_B_and_u0(A, DG.DAMPING)
-    return {"n": n, "A": A, "D": np.diag(A.sum(1))}, Y.astype(float), B, u_0, ts, z
+    return {"n": n, "A": A, "D": np.diag(A.sum(1))}, Y.astype(float), B, u_0, ts
 
 
 def run_awsgld(ini, Y, B, u_0, a0, n, BtB, P, Lc, seed):
@@ -46,7 +43,7 @@ def run_awsgld(ini, Y, B, u_0, a0, n, BtB, P, Lc, seed):
         s2 = max(invgamma.rvs(n / 2 + 0.001, scale=C / 2 + 0.001), FLOOR)
         eps = 0.3 / ((t + 1) ** 0.6 + 10)
         U = kfa.posterior_energy(Y, alpha, theta, u_0, B, s2)
-        bidx = np.random.choice(n, BATCH, replace=False) if BATCH < n else None
+        bidx = np.random.choice(n, E.BATCH, replace=False) if E.BATCH < n else None
         gU = kfa.grad_posterior_energy(Y, alpha, theta, u_0, B, s2, batch_idx=bidx, BtB=BtB)
         gm = 1.0
         if t < warm:
@@ -74,9 +71,7 @@ def ndcg_at_k(ts, th, k):
     return float(d / i) if i > 0 else 0.0
 
 
-def split_rhat(posts, wts):
-    """split-R̂: 각 체인을 반으로 갈라 2M sub-chain으로 Gelman-Rubin. AWSGLD 는 π-가중.
-    posts: list of M (L,n).  wts: list of M (L,) 또는 전부 None(raw)."""
+def split_rhat_coords(posts, wts):
     hm = []; hv = []; hL = None
     for ci, post in enumerate(posts):
         L = post.shape[0]; h = L // 2; hL = h
@@ -84,76 +79,68 @@ def split_rhat(posts, wts):
             seg = post[sl]
             if wts[ci] is not None:
                 w = wts[ci][sl]; sw = w.sum()
-                m = (w[:, None] * seg).sum(0) / sw
-                v = (w[:, None] * (seg - m) ** 2).sum(0) / sw
+                m = (w[:, None] * seg).sum(0) / sw; v = (w[:, None] * (seg - m) ** 2).sum(0) / sw
             else:
                 m = seg.mean(0); v = seg.var(0, ddof=1)
             hm.append(m); hv.append(v)
     hm = np.array(hm); hv = np.array(hv); M2 = len(hm)
     gm = hm.mean(0); Bo = ((hm - gm) ** 2).sum(0) / (M2 - 1); W = hv.mean(0)
-    R = np.sqrt(np.clip(((hL - 1) / hL * W + Bo) / np.maximum(W, 1e-12), 0, None))
-    return float(np.nanmax(R)), float(np.median(R))
+    return np.sqrt(np.clip(((hL - 1) / hL * W + Bo) / np.maximum(W, 1e-12), 0, None))
 
 
 def main():
-    graph, Y, B, u_0, ts, z = gen_data(N, SEED); n = N
+    graph, Y, B, u_0, ts = gen(N, SEED); n = N
     BtB = B.T @ B; ridge = 1e-6 * np.trace(BtB) / n
     P = np.linalg.solve(BtB + ridge * np.eye(n), np.eye(n)); P = 0.5 * (P + P.T)
     Lc = np.linalg.cholesky(P + 1e-10 * np.eye(n)); a0 = E.alpha_find(u_0, Y, E.GRID)
-    L = T - BURN; rows = []; t0 = time.time()
-    print(f"n={N} 종합지표 | T={T} 3-chain | AWSGLD=π가중\n", flush=True)
+    D = {}; t0 = time.time()
+    print(f"통합 4-chain×seed0 | n={N} T={T}\n", flush=True)
     for m in METHODS:
-        posts = []; wts = []; ess_list = []; kong = None; pooled_num = 0.0; pooled_den = 0.0
+        posts = []; wts = []; ess_list = []; minU = []; statU = []; pn = 0.0; pd = 0.0; kong = None
         for ci, val in enumerate(INITS):
             ini = (np.random.RandomState(7000 + 100 * SEED + ci).randn(n) * 1.5 if val == "rand" else np.full(n, float(val)))
             if m == "AWSGLD":
                 ths, J, aw = run_awsgld(ini, Y, B, u_0, a0, n, BtB, P, Lc, seed=100 * SEED + ci)
                 post = ths[BURN:]; Jp = J[BURN:]; w = aw[Jp].copy(); w[Jp >= M_REG - 1] = 0.0; sw = w.sum()
-                posts.append(post); wts.append(w)
-                pooled_num += (w[:, None] * post).sum(0); pooled_den += sw
+                posts.append(post); wts.append(w); pn += (w[:, None] * post).sum(0); pd += sw
                 if ci == 0: kong = (sw ** 2) / (np.sum(w ** 2) + 1e-300)
             else:
                 np.random.seed(100 * SEED + ci)
-                if m == "acMH":
-                    ths = E.run_acmh(graph, Y, B, u_0, ini, a0, 100 * SEED + ci)
-                else:
-                    ths = E.run_sgld_family(m, graph, Y, B, u_0, ini, a0, 100 * SEED + ci)
-                post = ths[BURN:]; posts.append(post); wts.append(None)
-                pooled_num += post.sum(0); pooled_den += post.shape[0]
+                ths = E.run_acmh(graph, Y, B, u_0, ini, a0, 100 * SEED + ci) if m == "acMH" \
+                    else E.run_sgld_family(m, graph, Y, B, u_0, ini, a0, 100 * SEED + ci)
+                post = ths[BURN:]; posts.append(post); wts.append(None); pn += post.sum(0); pd += post.shape[0]
             ess_list.append(np.nanmedian(ess_per_node(post)))
-        thetahat = pooled_num / pooled_den
-        rmax, rmed = split_rhat(posts, wts)
-        sp = spearmanr(ts, thetahat).statistic; mse = float(np.mean((thetahat - ts) ** 2))
-        KS = [5, 10, 20, 50]
-        nd = {k: ndcg_at_k(ts, thetahat, k) for k in KS}
-        rows.append(dict(m=m, sp=sp, mse=mse, ndcg=nd, rmax=rmax, rmed=rmed,
-                         ess=float(np.median(ess_list)), kong=(float(kong) if kong else None)))
-        r = rows[-1]
-        print(f"  {m:>8}: Spear {sp:.3f} MSE {mse:.2f} | NDCG@5/10/20/50 {nd[5]:.3f}/{nd[10]:.3f}/{nd[20]:.3f}/{nd[50]:.3f} | "
-              f"R̂max {rmax:.2f} R̂med {rmed:.3f} | ESS {r['ess']:.1f}{'' if kong is None else f' Kong {kong:.0f}'}  ({int(time.time()-t0)}s)", flush=True)
+            Utr = E.energy_trace_common(post, Y, B, u_0, a0)
+            minU.append(float(Utr.min())); statU.append(float(np.median(Utr)))
+        th = pn / pd
+        R = split_rhat_coords(posts, wts)
+        D[m] = dict(sp=spearmanr(ts, th).statistic, mse=float(np.mean((th - ts) ** 2)),
+                    ndcg=ndcg_at_k(ts, th, 50), rmed=float(np.median(R)), rq95=float(np.quantile(R, 0.95)),
+                    rmax=float(np.nanmax(R)), ess=float(np.median(ess_list)), kong=kong,
+                    minU=minU, statU=statU)
+        print(f"  {m:>8}: Spear {D[m]['sp']:.2f} R̂ med/q95/max {D[m]['rmed']:.2f}/{D[m]['rq95']:.2f}/{D[m]['rmax']:.2f} "
+              f"ESS {D[m]['ess']:.0f} minU {np.mean(minU):.0f}  ({int(time.time()-t0)}s)", flush=True)
 
-    print("\n=== n=100 NDCG@k 비교 (k 늘려도?) ===")
-    print(f"{'method':>8} | {'@5':>6} {'@10':>6} {'@20':>6} {'@50':>6}")
-    for r in rows:
-        n = r["ndcg"]
-        print(f"{r['m']:>8} | {n[5]:>6.3f} {n[10]:>6.3f} {n[20]:>6.3f} {n[50]:>6.3f}")
-
-    print("\n=== n=100 종합 (AWSGLD=π가중, 나머지=raw) ===")
-    hdr = f"{'method':>8} | {'Spear↑':>7} {'MSE↓':>6} {'NDCG50↑':>8} | {'R̂max↓':>7} {'R̂med↓':>7} | {'ESS↑':>6}"
+    CUT = float(np.round(np.median(D["AWSGLD"]["statU"])))   # cutoff = AWSGLD 정상상태 에너지 (4체인 median)
+    NC = len(INITS)
+    print(f"\ncutoff = {CUT:.0f} (AWSGLD 정상상태 에너지, 4체인 median)\n")
+    hdr = f"{'Sampler':>8} {'Spear':>6} {'MSE':>6} {'NDCG50':>7} | {'R̂med':>6} {'R̂q95':>6} {'R̂max':>6} | {'ESS':>5} | {'LowU':>5} {'Reach':>6}"
     print(hdr); print("-" * len(hdr))
-    for r in rows:
-        conv = "✅" if r["rmax"] < 1.2 else "  "
-        print(f"{r['m']:>8} | {r['sp']:>7.3f} {r['mse']:>6.2f} {r['ndcg'][50]:>8.3f} | {r['rmax']:>6.2f}{conv} {r['rmed']:>7.3f} | {r['ess']:>6.1f}")
+    for m in METHODS:
+        d = D[m]; low = [max(CUT, v) for v in d["minU"]]; reach = sum(1 for v in d["minU"] if v <= CUT)
+        d["low"] = float(np.mean(low)); d["reach"] = reach
+        print(f"{m:>8} {d['sp']:>6.2f} {d['mse']:>6.2f} {d['ndcg']:>7.3f} | {d['rmed']:>6.3f} {d['rq95']:>6.3f} {d['rmax']:>6.3f} | "
+              f"{d['ess']:>5.0f} | {d['low']:>5.0f} {reach:>4}/{NC}")
 
-    with open(os.path.join(HERE, "full_metrics_n100.csv"), "w", newline="") as fh:
-        w = csv.writer(fh); w.writerow(["method", "spearman", "mse", "ndcg5", "ndcg10", "ndcg20", "ndcg50", "rhat_max", "rhat_median", "ess", "kong_ess"])
-        for r in rows:
-            nd = r["ndcg"]
-            w.writerow([r["m"], round(r["sp"], 4), round(r["mse"], 4),
-                        round(nd[5], 4), round(nd[10], 4), round(nd[20], 4), round(nd[50], 4),
-                        round(r["rmax"], 4), round(r["rmed"], 4), round(r["ess"], 2),
-                        ("" if r["kong"] is None else round(r["kong"], 1))])
-    print(f"\n저장: full_metrics_n100.csv ({int(time.time()-t0)}s)")
+    with open(os.path.join(HERE, "unified_n100.csv"), "w", newline="") as fh:
+        w = csv.writer(fh); w.writerow(["method", "spearman", "mse", "ndcg50", "rhat_median", "rhat_q95", "rhat_max",
+                                        "ess", "kong_ess", "lowest_U", "reached", "n_chains", "cutoff"])
+        for m in METHODS:
+            d = D[m]
+            w.writerow([m, round(d["sp"], 4), round(d["mse"], 4), round(d["ndcg"], 4), round(d["rmed"], 4),
+                        round(d["rq95"], 4), round(d["rmax"], 4), round(d["ess"], 2),
+                        ("" if d["kong"] is None else round(d["kong"], 1)), round(d["low"], 1), d["reach"], NC, CUT])
+    print(f"\n저장: unified_n100.csv ({int(time.time()-t0)}s)")
 
 
 if __name__ == "__main__":

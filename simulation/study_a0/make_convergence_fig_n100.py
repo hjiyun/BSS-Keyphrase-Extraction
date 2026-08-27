@@ -23,11 +23,11 @@ ax.axhline(1.05, color="red", ls="--", lw=1.3, alpha=0.8, label="R̂=1.05 (엄�
 ax.axhline(1.2, color="orange", ls=":", lw=1.1, alpha=0.6, label="R̂=1.2 (완화 기준)")
 # AWSGLD 1.05 통과 지점 표시
 aw = [float(rows["AWSGLD"][f"rhatmax@{k}"]) for k in CK]
-ax.annotate("AWSGLD: 15k에서 1.03\n(1.05 기준 수렴)", (15000, aw[3]),
-            xytext=(9000, 1.9), fontsize=9.5, color=COL["AWSGLD"], fontweight="bold",
+ax.annotate("AWSGLD: 20k에서 1.01\n(1.05 기준 수렴)", (20000, aw[4]),
+            xytext=(10000, 1.9), fontsize=9.5, color=COL["AWSGLD"], fontweight="bold",
             arrowprops=dict(arrowstyle="->", color=COL["AWSGLD"]))
 ax.set_xlabel("iteration (T)"); ax.set_ylabel("R̂ max (π 기준)")
-ax.set_title("수렴 속도 (n=100): AWSGLD만 R̂max<1.05 도달 (과분산 3-chain)", fontsize=12, fontweight="bold")
+ax.set_title("수렴 속도 (n=100): AWSGLD만 R̂max<1.05 도달 (과분산 4-chain)", fontsize=12, fontweight="bold")
 ax.legend(fontsize=9); ax.grid(alpha=0.2)
 fig.tight_layout(); fig.savefig(os.path.join(HERE, "convergence_n100_r105.png"), dpi=140, bbox_inches="tight")
 print("저장: convergence_n100_r105.png")

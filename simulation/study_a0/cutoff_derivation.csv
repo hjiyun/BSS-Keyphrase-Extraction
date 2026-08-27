@@ -1,7 +1,0 @@
-method,seed,rhat_conv_iter,stationary_energy_after_conv
-AWSGLD,0,4083,302.0
-AWSGLD,1,4266,328.9
-AWSGLD,2,3533,305.6
-cycSGLD,0,,263.3
-cycSGLD,1,,270.8
-cycSGLD,2,,262.1

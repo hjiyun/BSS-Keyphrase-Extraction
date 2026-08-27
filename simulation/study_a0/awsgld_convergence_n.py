@@ -24,7 +24,7 @@ N = int(sys.argv[1]) if len(sys.argv) > 1 else 100
 T_MAX = 20000; BURN = 500; BATCH = min(50, N); FLOOR = 1.0
 M_REG = kfa.M_REGIONS; ZETA = kfa.ZETA; TAU = kfa.TAU; DECAY = kfa.DECAY_LR
 CYC = 10; SEED = 0
-INITS = [-0.8, 1.0, 2.5]
+INITS = [-0.8, 1.0, 2.5, "rand"]  # 4-chain
 CKPTS = [2000, 5000, 10000, 15000, 20000]
 METHODS = ["AWSGLD", "qSGLD", "cycSGLD", "SGHMC"]
 COL = {"AWSGLD": "#2456A6", "qSGLD": "#27ae60", "cycSGLD": "#8e44ad", "SGHMC": "#16A085"}
@@ -108,7 +108,8 @@ def main():
     for m in METHODS:
         chains = []; Js = []; aw_final = None
         for ci, val in enumerate(INITS):
-            ths, J, aw = run(m, np.full(n, float(val)), Y, B, u_0, a0, n, BtB, P, Lc, seed=100 * SEED + ci)
+            ini = (np.random.RandomState(7000 + ci).randn(n) * 1.5 if val == "rand" else np.full(n, float(val)))
+            ths, J, aw = run(m, ini, Y, B, u_0, a0, n, BtB, P, Lc, seed=100 * SEED + ci)
             chains.append(ths); Js.append(J); aw_final = aw
         wtd = (m == "AWSGLD")
         rs = [rhat_w(chains, Js, aw_final, BURN, tc, wtd) for tc in CKPTS]

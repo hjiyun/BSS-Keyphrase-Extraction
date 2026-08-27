@@ -22,7 +22,7 @@ N = 100
 E.T = 20000; E.BURN = 2000; E.BATCH = 50
 T = E.T; BURN = E.BURN; BATCH = E.BATCH; FLOOR = 1.0
 M_REG = kfa.M_REGIONS; ZETA = kfa.ZETA; TAU = kfa.TAU; DECAY = kfa.DECAY_LR
-SEED = 0; INITS = [-0.8, 1.0, 2.5]
+SEED = 0; INITS = [-0.8, 1.0, 2.5, "rand"]  # 4-chain (과분산 3 + 랜덤)
 METHODS = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
 
 
@@ -91,7 +91,7 @@ def main():
     for m in METHODS:
         means = []; withins = []; ess_list = []; kong = None; pooled_num = 0.0; pooled_den = 0.0
         for ci, val in enumerate(INITS):
-            ini = np.full(n, float(val))
+            ini = (np.random.RandomState(7000 + 100 * SEED + ci).randn(n) * 1.5 if val == "rand" else np.full(n, float(val)))
             if m == "AWSGLD":
                 ths, J, aw = run_awsgld(ini, Y, B, u_0, a0, n, BtB, P, Lc, seed=100 * SEED + ci)
                 post = ths[BURN:]; Jp = J[BURN:]; w = aw[Jp].copy(); w[Jp >= M_REG - 1] = 0.0; sw = w.sum()

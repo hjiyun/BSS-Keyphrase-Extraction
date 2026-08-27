@@ -152,20 +152,21 @@ Gelman-Rubin R̂ < 1.2.
 **느린 노드 진단**(n=200): R̂max>1.2 노드는 **단 1개**(200 중). 특성 = **약하게 식별되는 N 노드**
 (θ*≈0 애매, 고degree로 반대그룹에 끌림) → 사후가 diffuse해 R̂ 민감. 믹싱 실패 아님(모든 샘플러 공통).
 
-### n=100·T=20000 최종 6-sampler 종합 (AWSGLD=π가중)
-| 샘플러 | Spearman | MSE | NDCG@50 | R̂max | R̂med | ESS |
-|---|---:|---:|---:|---:|---:|---:|
-| acMH | −0.09 | 2.97 | 0.601 | 1.10 | 1.014 | 73 |
-| SGLD | 0.03 | 2.45 | 0.599 | 5.38 | 2.808 | 11 |
-| qSGLD | 0.50 | 3.76 | 0.784 | 1.26 | 1.055 | 18 |
-| cycSGLD | 0.53 | 2.30 | 0.802 | 1.29 | 1.140 | 34 |
-| SGHMC | 0.24 | 2.49 | 0.699 | 2.73 | 1.437 | 13 |
-| **AWSGLD** | **0.59** | **2.19** | **0.810** | **1.08** | **1.014** | **114** |
+### n=100·T=20000 최종 통합표 (4-chain × seed0, split-R̂, AWSGLD=π가중)
+| 샘플러 | Spearman | MSE | NDCG@50 | R̂med | R̂q95 | R̂max | ESS | Lowest U | Reached |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| acMH | 0.47 | 4.83 | 0.784 | 1.251 | 1.567 | 1.691 | 68 | 82 | 2/4 |
+| SGLD | 0.12 | 2.15 | 0.605 | 3.096 | 4.916 | 5.904 | 11 | 110 | 0/4 |
+| qSGLD | 0.51 | 4.98 | 0.797 | 1.209 | 1.620 | 2.270 | 18 | 114 | 0/4 |
+| cycSGLD | 0.53 | 2.26 | 0.802 | 1.237 | 1.369 | 1.423 | 33 | 71 | 4/4 |
+| SGHMC | 0.29 | 2.23 | 0.711 | 1.638 | 2.306 | 2.811 | 13 | 100 | 0/4 |
+| **AWSGLD** | **0.61** | **2.12** | **0.824** | **1.026** | **1.057** | **1.080** | **121** | 71 | 4/4 |
 
-→ **AWSGLD가 6지표 전부 1위.** NDCG는 k 늘리면(@50) AWSGLD가 최고(@10 약점 소멸).
-정직한 관찰: **acMH 는 R̂ 1.10·ESS 73 으로 수렴처럼 보이나 Spearman −0.09 = collapse된 오답**.
-→ R̂·ESS 만으론 부족, 복원까지 봐야 하며 **AWSGLD 만 수렴·효율·복원을 동시 만족**.
+- 모든 열이 **4-chain × seed0 단일 setup**. 4연쇄 시작점 = μ_N / μ_W / μ_S / **random N(0, 1.5²)**.
+- R̂ = **split-R̂**(각 체인 반 분할 → 2M sub-chain, 좌표별 median/q95/max), AWSGLD는 π-가중.
+- cutoff = 71 (AWSGLD 정상상태 에너지, 4체인 median). **Lowest U = 4연쇄 clamped 최소의 평균(mean)**.
+- **AWSGLD가 R̂ 3종·Spearman·MSE·NDCG@50·ESS 전부 1위.** 다른 샘플러는 특히 **random 4번째 연쇄가 수렴·도달 실패**(AWSGLD만 random 연쇄도 도달). acMH 는 R̂ 낮아 보여도 MSE 4.83·Spearman 0.47로 복원 열세 → R̂·ESS만으론 부족, 복원까지 봐야 함.
 
-관련 스크립트: `awsgld_weighted_diag.py`, `awsgld_zeta_tune.py`, `awsgld_convergence_n.py`,
-`slow_node_diag.py`, `full_metrics_n100.py`, `strip6_cutoff_n100.py`.
-그림: `full_metrics_n100.png`, `strip6_cutoff_n100.png`, `convergence_n100_r105.png`.
+관련 스크립트: `unified_n100.py`(통합표), `awsgld_convergence_n.py`(수렴곡선), `awsgld_weighted_diag.py`,
+`awsgld_zeta_tune.py`, `slow_node_diag.py`, `trace_n100.py`.
+그림: `strip6_cutoff_n100.png`, `convergence_n100_r105.png`, `trace_n100*.png`.

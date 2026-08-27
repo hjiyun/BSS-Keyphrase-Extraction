@@ -117,7 +117,7 @@ def main():
         D[m] = dict(sp=spearmanr(ts, th).statistic, mse=float(np.mean((th - ts) ** 2)),
                     ndcg=ndcg_at_k(ts, th, 50), rmed=float(np.median(R)), rq95=float(np.quantile(R, 0.95)),
                     rmax=float(np.nanmax(R)), ess=float(np.median(ess_list)), kong=kong,
-                    minU=minU, statU=statU)
+                    minU=minU, statU=statU, ess_chain=[float(e) for e in ess_list])
         print(f"  {m:>8}: Spear {D[m]['sp']:.2f} R̂ med/q95/max {D[m]['rmed']:.2f}/{D[m]['rq95']:.2f}/{D[m]['rmax']:.2f} "
               f"ESS {D[m]['ess']:.0f} minU {np.mean(minU):.0f}  ({int(time.time()-t0)}s)", flush=True)
 
@@ -140,7 +140,15 @@ def main():
             w.writerow([m, round(d["sp"], 4), round(d["mse"], 4), round(d["ndcg"], 4), round(d["rmed"], 4),
                         round(d["rq95"], 4), round(d["rmax"], 4), round(d["ess"], 2),
                         ("" if d["kong"] is None else round(d["kong"], 1)), round(d["low"], 1), d["reach"], NC, CUT])
-    print(f"\n저장: unified_n100.csv ({int(time.time()-t0)}s)")
+    # 연쇄별 detail (strip 그림용): 연쇄마다 clamped min_U, ESS
+    with open(os.path.join(HERE, "unified_detail_n100.csv"), "w", newline="") as fh:
+        w = csv.writer(fh); w.writerow(["method", "chain", "min_U", "lowest_U_clamped", "ess", "cutoff"])
+        for m in METHODS:
+            d = D[m]
+            for c in range(NC):
+                w.writerow([m, c, round(d["minU"][c], 2), round(max(CUT, d["minU"][c]), 2),
+                            round(d["ess_chain"][c], 2), CUT])
+    print(f"\n저장: unified_n100.csv, unified_detail_n100.csv ({int(time.time()-t0)}s)")
 
 
 if __name__ == "__main__":

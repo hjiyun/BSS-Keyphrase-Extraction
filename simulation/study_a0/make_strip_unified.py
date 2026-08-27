@@ -23,8 +23,8 @@ METHODS = [m for m in ORDER if m in low]; NC = len(low["AWSGLD"])
 
 fig, axes = plt.subplots(1, 2, figsize=(15, 5.2)); rng = np.random.RandomState(0)
 for ax, dic, ylab, ttl, fmt, hl in [
-        (axes[0], low, "Lowest $U$ reached (clamped at cut-off)", "(a) Lowest U reached  (lower = better)", "{:.0f}", CUT),
-        (axes[1], ess, "ESS (median over nodes)", "(b) ESS  (higher = better)", "{:.1f}", None)]:
+        (axes[0], low, "Lowest $U$ reached (clamped;  bar = 4-chain mean)", "(a) Lowest U reached  (lower = better)", "{:.0f}", CUT),
+        (axes[1], ess, "ESS (per-chain: median over nodes;  bar = 4-chain mean)", "(b) ESS  (higher = better)", "{:.1f}", None)]:
     for i, m in enumerate(METHODS):
         v = np.array(dic[m]); xs = i + (rng.rand(len(v)) - 0.5) * 0.28
         ax.scatter(xs, v, s=52, color=COL[m], alpha=0.85, edgecolor="white", lw=0.6, zorder=3)

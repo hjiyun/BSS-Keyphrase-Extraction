@@ -44,3 +44,4 @@ simulation/study_2/archive/*
 # Study 3 지표 표 — 스크립트가 stdout 으로만 출력하므로 이 로그가 유일한 기록
 !simulation/study_3/run_metrics.log
 !simulation/study_3/run10_metrics.log
+simulation/study_1b/mixture/*.log

@@ -45,3 +45,4 @@ simulation/study_2/archive/*
 !simulation/study_3/run_metrics.log
 !simulation/study_3/run10_metrics.log
 simulation/study_1b/mixture/*.log
+simulation/study_1a/*.log

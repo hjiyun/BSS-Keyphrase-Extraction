@@ -33,6 +33,10 @@ SGHMC_LR = 0.01; SGHMC_FRICTION = 0.1
 METHODS = ["acMH", "SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
 
 
+def gm_ts(a, z, g):
+    return float(np.mean(a[z == g]))
+
+
 def gen_scenario(sc_cfg, seed):
     LMC.BLOCK_PROBS = sc_cfg["block_probs"]
     scen = dict(sc_cfg["scenario"]); scen["n_total"] = N
@@ -175,6 +179,7 @@ def run_method(method, ctx, target=None):
 
 def run_scenario(sc_cfg):
     graph, Y, B, u_0, ts, scen, a0 = gen_scenario(sc_cfg, SEED); n = N
+    z = np.array([str(g) for g in graph["group"]])
     BtB = B.T @ B; ridge = 1e-6 * np.trace(BtB) / n
     P = np.linalg.solve(BtB + ridge * np.eye(n), np.eye(n)); P = 0.5 * (P + P.T)
     Lc = np.linalg.cholesky(P + 1e-10 * np.eye(n))
@@ -212,7 +217,7 @@ def run_scenario(sc_cfg):
     for m in METHODS:
         states = states_by[m]; Tstop = T_conv
         posts, wts = collect(states)
-        pn = np.zeros(n); pd = 0.0; ess_list = []
+        pn = np.zeros(n); pd = 0.0; ess_list = []; minU = []; statU = []
         for ci, st in enumerate(states):
             post = posts[ci]
             if wts[ci] is not None:
@@ -220,23 +225,33 @@ def run_scenario(sc_cfg):
             else:
                 pn += post.sum(0); pd += post.shape[0]
             ess_list.append(float(np.nanmedian(ess_per_node(post))))
+            Utr = E.energy_trace_common(post, Y, B, u_0, a0)
+            minU.append(float(Utr.min())); statU.append(float(np.median(Utr)))
         th = pn / pd; R = split_rhat_coords(posts, wts)
         pi_hat = 1.0 / (1.0 + np.exp(-np.clip(th, -700, 700)))
-        pi_star = 1.0 / (1.0 + np.exp(-np.clip(ts, -700, 700)))
         k = max(1, int(np.sum(ts > 0)))
+        gm = lambda a, g: float(np.mean(a[z == g]))          # 그룹 평균
         D[m] = dict(sp=spearmanr(ts, th).statistic, kend=kendalltau(ts, th).statistic,
                     topk=float(LMC.topk_overlap(ts, th, k)), ndcg=ndcg_at_k(ts, th, 50),
-                    mse=float(np.mean((th - ts) ** 2)), mse_pi=float(np.mean((pi_hat - pi_star) ** 2)),
+                    mse=float(np.mean((th - ts) ** 2)),
+                    thS=gm(th, "S"), thW=gm(th, "W"), thN=gm(th, "N"),
+                    piS=gm(pi_hat, "S"), piW=gm(pi_hat, "W"), piN=gm(pi_hat, "N"),
                     rmed=float(np.median(R)), rq95=float(np.quantile(R, 0.95)), rmax=float(np.nanmax(R)),
-                    ess=float(np.mean(ess_list)), Tstop=Tstop)
+                    ess=float(np.mean(ess_list)), minU=minU, statU=statU, Tstop=Tstop)
         print(f"    {m:>8}: T_stop={Tstop:>5} R̂med={D[m]['rmed']:.3f} ({int(time.time()-t0)}s)", flush=True)
 
-    # ── 표 1: 수렴·추정 ──
-    h1 = f"{'Sampler':>8} | {'R̂med':>6} {'R̂q95':>6} {'R̂max':>6} | {'ESS':>5} | {'MSE_θ':>6} {'MSE_π':>6}"
-    print(f"  [표1 수렴]  (T_conv={T_conv})\n  " + h1); print("  " + "-" * len(h1))
+    CUT = float(np.round(np.median(D["AWSGLD"]["statU"])))    # cutoff = AWSGLD 정상상태 에너지(4연쇄 median)
+    for m in METHODS:
+        D[m]["low"] = float(np.mean([max(CUT, v) for v in D[m]["minU"]]))
+
+    # ── 표 1: 수렴 + θ̂·π̂ 추정값 + Lowest U ──  (정답: θ*(S/W/N)=%s, cutoff U=%.0f)
+    tsg = f"{gm_ts(ts,z,'S'):.2f}/{gm_ts(ts,z,'W'):.2f}/{gm_ts(ts,z,'N'):.2f}"
+    h1 = f"{'Sampler':>8} | {'R̂med':>6} {'R̂q95':>6} {'R̂max':>6} | {'ESS':>5} | {'θ̂(S/W/N)':>18} {'π̂(S/W/N)':>18} | {'LowU':>6}"
+    print(f"  [표1 수렴·추정]  T_conv={T_conv}  θ*(S/W/N)={tsg}  cutoff U={CUT:.0f}\n  " + h1); print("  " + "-" * len(h1))
     for m in METHODS:
         d = D[m]
-        print(f"  {m:>8} | {d['rmed']:>6.3f} {d['rq95']:>6.3f} {d['rmax']:>6.3f} | {d['ess']:>5.0f} | {d['mse']:>6.2f} {d['mse_pi']:>6.4f}")
+        thc = f"{d['thS']:.2f}/{d['thW']:.2f}/{d['thN']:.2f}"; pic = f"{d['piS']:.2f}/{d['piW']:.2f}/{d['piN']:.2f}"
+        print(f"  {m:>8} | {d['rmed']:>6.3f} {d['rq95']:>6.3f} {d['rmax']:>6.3f} | {d['ess']:>5.0f} | {thc:>18} {pic:>18} | {d['low']:>6.0f}")
     # ── 표 2: 순위 ──
     h2 = f"{'Sampler':>8} | {'Spear':>6} {'Kendall':>7} {'Top-k':>6} {'NDCG50':>7} {'MSE_all':>7}"
     print(f"  [표2 순위]\n  " + h2); print("  " + "-" * len(h2))
@@ -245,8 +260,10 @@ def run_scenario(sc_cfg):
         d = D[m]
         print(f"  {m:>8} | {d['sp']:>6.2f} {d['kend']:>7.2f} {d['topk']:>6.3f} {d['ndcg']:>7.3f} {d['mse']:>7.2f}")
         rows.append([name, m, round(d["rmed"], 4), round(d["rq95"], 4), round(d["rmax"], 4), round(d["ess"], 2),
-                     round(d["mse"], 4), round(d["mse_pi"], 6), round(d["sp"], 4), round(d["kend"], 4),
-                     round(d["topk"], 4), round(d["ndcg"], 4), d["Tstop"]])
+                     round(d["thS"], 4), round(d["thW"], 4), round(d["thN"], 4),
+                     round(d["piS"], 4), round(d["piW"], 4), round(d["piN"], 4), round(d["low"], 2),
+                     round(d["sp"], 4), round(d["kend"], 4), round(d["topk"], 4), round(d["ndcg"], 4),
+                     round(d["mse"], 4), d["Tstop"]])
     return rows
 
 
@@ -267,8 +284,9 @@ def main():
     out = os.path.join(_HERE, f"unified_scenarios_{tag}.csv")
     with open(out, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["seed", "scenario", "method", "rhat_median", "rhat_q95", "rhat_max", "ess", "mse_theta",
-                    "mse_pi", "spearman", "kendall", "topk", "ndcg50", "T_stop"])
+        w.writerow(["seed", "scenario", "method", "rhat_median", "rhat_q95", "rhat_max", "ess",
+                    "th_S", "th_W", "th_N", "pi_S", "pi_W", "pi_N", "lowest_U",
+                    "spearman", "kendall", "topk", "ndcg50", "mse_all", "T_stop"])
         w.writerows(allrows)
     print(f"\n저장: {out} ({int(time.time()-t0)}s)")
 

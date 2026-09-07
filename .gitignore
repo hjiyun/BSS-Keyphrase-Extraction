@@ -46,3 +46,9 @@ simulation/study_2/archive/*
 !simulation/study_3/run10_metrics.log
 simulation/study_1b/mixture/*.log
 simulation/study_1a/*.log
+simulation/study_1c/*.log
+simulation/study_1c/GPU_DONE
+simulation/study_1c/N10000_DONE
+simulation/study_2/mrg_*.log
+simulation/study_2/MERGE_DONE
+simulation/study_2/MERGE_D10_DONE

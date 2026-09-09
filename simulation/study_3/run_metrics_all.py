@@ -15,7 +15,11 @@ from keyphrase_functions_awsgld import inv_logit, FDR_cutoff_full
 
 KDOC = int(sys.argv[1]) if len(sys.argv) > 1 else 3
 TB.BASELINE = -2.0; SIG2 = 0.5; TAU = 1.0; NSEED = 10
-if KDOC == 3:
+if KDOC == 1:
+    DOCS = ['1994']; STEP = 0.3; EPS0 = 12.0; ZETA = 10.0
+    T = 12000; BURN = 3000; START = 0
+    LEVELS = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]; TOPKS = [10, 20]
+elif KDOC == 3:
     DOCS = ['1994', '212', '227']; STEP = 0.3; EPS0 = 12.0; ZETA = 10.0
     T = 12000; BURN = 3000; START = 1
     LEVELS = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]; TOPKS = [10, 20]

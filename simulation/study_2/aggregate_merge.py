@@ -36,7 +36,7 @@ def c(nd, meth, mt, fmt="{:.3f}"):
 
 
 def duo(nd, meth, keys, fmt="{:.2f}"):
-    return "/".join(fmt.format(agg[(nd, meth)][k][0]) for k in keys)
+    return " / ".join(f"{fmt.format(agg[(nd, meth)][k][0])}±{fmt.format(agg[(nd, meth)][k][1])}" for k in keys)
 
 
 for nd in conds:

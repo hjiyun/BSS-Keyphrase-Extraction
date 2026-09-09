@@ -123,8 +123,54 @@ def gold_metrics(th, truth, n):
     return P, R, ndcg, auc
 
 
+def run_mg(mg, seed, label=""):
+    """병합/단일 그래프 mg 위에서 6샘플러 파이프라인 → 메서드별 지표 dict D."""
+    n = mg["n"]; Y = mg["Y"]; B = mg["B"]; u_0 = mg["u_0"]; truth = mg["truth"]; a0 = mg["a0"]
+    graph = {"n": n, "A": mg["A"], "D": mg["D"]}
+    US.N = n; US.BATCH = n; US.T_MAX = 8000; US.BURN = 1000; US.MIN_T = 3000; US.CHUNK = 1000; US.STOP_RHAT = 1.05
+    t0 = time.time()
+    BtB = B.T @ B; ridge = 1e-6 * np.trace(BtB) / n
+    P = np.linalg.solve(BtB + ridge * np.eye(n), np.eye(n)); P = 0.5 * (P + P.T)
+    Lc = np.linalg.cholesky(P + 1e-10 * np.eye(n))
+    inits = [np.full(n, -0.5), np.full(n, 0.5), np.full(n, 1.5),
+             np.random.RandomState(7000 + seed).randn(n) * 1.5]
+    ctx = dict(Y=Y, B=B, u_0=u_0, BtB=BtB, P=P, Lc=Lc, a0=a0, inits=inits, seed_base=100 * seed)
+    print(f"[{label}] n={n}, truth={len(truth)} precond({int(time.time()-t0)}s)", flush=True)
+    aw_states, T_conv = US.run_method("AWSGLD", ctx, target=None)
+    statU = [float(np.median(E.energy_trace_common(aw_states[c]["ths"][US.BURN:aw_states[c]["t"]], Y, B, u_0, a0)))
+             for c in range(len(aw_states))]
+    cutoff = float(np.round(np.median(statU)))
+    D = {"AWSGLD": _metrics(aw_states, ctx, truth, cutoff, T_conv)}; del aw_states
+    for m in ["SGLD", "qSGLD", "cycSGLD", "SGHMC"]:
+        sts, _ = US.run_method(m, ctx, target=T_conv)
+        D[m] = _metrics(sts, ctx, truth, cutoff, T_conv); del sts
+    E.T = T_conv; E.BURN = US.BURN; E.BATCH = US.BATCH
+    posts = []
+    for ci, ini in enumerate(inits):
+        np.random.seed(100 * seed + ci)
+        posts.append(dict(method="acMH", ths=E.run_acmh(graph, Y, B, u_0, ini, a0, 100 * seed + ci), t=T_conv))
+    D["acMH"] = _metrics(posts, ctx, truth, cutoff, T_conv); del posts
+    print(f"    done ({int(time.time()-t0)}s)", flush=True)
+    return D, n, len(truth)
+
+
 def run_one(ndoc, variant):
     seed = variant                                    # Y 관측 시드 = 변형 번호(세트마다 고정)
+    mg = merge(high_overlap_variant(ndoc, variant), seed)
+    D, n, nt = run_mg(mg, seed, label=f"ndoc={ndoc} v={variant} docs={mg['docs']}")
+    truth = mg["truth"]
+    rows = []
+    for m in ["acMH", "SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]:
+        d = D[m]
+        rows.append([ndoc, seed, n, nt, m, round(d["rmed"], 4), round(d["rq95"], 4), round(d["rmax"], 4),
+                     round(d["ess"], 2), round(d["thK"], 4), round(d["thN"], 4), round(d["piK"], 4), round(d["piN"], 4),
+                     round(d["low"], 2), round(d["P"], 4), round(d["R"], 4), round(d["ndcg"], 4),
+                     round(d["auc"], 4), d["Tstop"]])
+    return rows
+
+
+def _run_one_OLD(ndoc, variant):
+    seed = variant
     mg = merge(high_overlap_variant(ndoc, variant), seed)
     n = mg["n"]; Y = mg["Y"]; B = mg["B"]; u_0 = mg["u_0"]; truth = mg["truth"]; a0 = mg["a0"]
     graph = {"n": n, "A": mg["A"], "D": mg["D"]}

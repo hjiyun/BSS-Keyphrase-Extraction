@@ -52,3 +52,8 @@ simulation/study_1c/N10000_DONE
 simulation/study_2/mrg_*.log
 simulation/study_2/MERGE_DONE
 simulation/study_2/MERGE_D10_DONE
+
+# 실행 완료 표식 / 로컬 배치 런처 — 재현 근거는 코드·CSV 로 충분
+*.DONE
+*_DONE
+simulation/study_fav/*.sh

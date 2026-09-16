@@ -22,6 +22,7 @@ Wang et al. (2023)의 Bayesian Semi-supervised (BSS) 키프레이즈 추출에�
 | [Study 2](study_2.md) | 실 키프레이즈 데이터 벤치마크 + 다봉성 진단 + 합성 트랩 | Hulth, SemEval |
 | [Study 3](study_3.md) | 실데이터로 구성한 local trap에서의 acMH vs AWSGLD | Hulth |
 | [Study A0](study_a0.md) | **원본 U(θ) 정밀 비교** — 볼록성 증명·정직한 지표·수렴 기반 cut-off | 실데이터 (n=400) |
+| [Study fav](study_fav.md) | **표준(단봉) BSS에서 최적화(T→0) vs 샘플링(T=1) 2축 비교** — 6샘플러·난이도·n·런타임 | 합성 + Hulth |
 | [파라미터 정리](parameters.md) | 폴더별 스크립트·목적·파라미터·산출물 참조표 | — |
 
 ## 이야기의 흐름

@@ -7,7 +7,7 @@ SG-MCMC 5종도 동일 annealing·동일 예산. 모두 α·σ² 고정(=a0,1), 
 
 사용: python3 opt_acmh_fair.py [n=1000] [nseed=3]
 """
-import sys, time, numpy as np
+import os, sys, time, numpy as np
 from numpy.linalg import solve, inv, cholesky
 from scipy.stats import spearmanr
 sys.path.insert(0, "/home/jiyoon/BSS-Keyphrase-Extraction/code_JOC")
@@ -15,9 +15,13 @@ import keyphrase_functions_awsgld as kfa
 
 N     = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
 NSEED = int(sys.argv[2]) if len(sys.argv) > 2 else 3
-MU, ALPHA, SIG, PIN, POUT, S2 = 1.2, 0.35, 0.4, 0.30, 0.02, 1.0
+MU    = float(sys.argv[3]) if len(sys.argv) > 3 else 1.2
+ALPHA = float(sys.argv[4]) if len(sys.argv) > 4 else 0.35
+SIG, PIN, POUT, S2 = 0.4, 0.30, 0.02, 1.0
 M_REG = kfa.M_REGIONS; DECAY = kfa.DECAY_LR; ZETA = 1.0; MAXB = 3000; EPS = 1.0
 METH = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD", "acMH"]   # acMH 마지막(느림) → 앞의 빠른 것부터 실시간 출력
+if os.environ.get("SGONLY"):                                     # SGONLY=1 → MH(acMH) 제외, SG-MCMC 5종만
+    METH = [m for m in METH if m != "acMH"]
 sigm = lambda x: 1 / (1 + np.exp(-np.clip(x, -700, 700)))
 
 
@@ -121,6 +125,11 @@ def metric(bth, bU, Umin, ts, truth, n, pistar):
 
 def main():
     R = {m: [] for m in METH}
+    import csv as _csv
+    csvfn = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"optacmh_n{N}_mu{MU}_a{ALPHA}_seeds.csv")
+    _new = not os.path.exists(csvfn)
+    _cf = open(csvfn, "a", newline=""); _cw = _csv.writer(_cf)
+    if _new: _cw.writerow(["seed", "method", "minU", "gap", "pidist", "pirms", "spear", "topk", "ndcg", "mse", "auc", "time"])
     for s in range(NSEED):
         n, B, u0, Y, a0, ts, truth = gen(s)
         U, gradU, BtB = make(n, B, u0, Y, a0)
@@ -139,6 +148,7 @@ def main():
                 bU, bth, _ = sg_run(m, budget, n, B, u0, Y, a0, U, gradU, P, Lc, np.random.default_rng(0))
             dt = time.time() - t0
             mm = metric(bth, bU, Umin, ts, truth, n, pistar); mm['time'] = dt; R[m].append(mm)
+            _cw.writerow([s, m, mm['minU'], mm['gap'], mm['pidist'], mm['pirms'], mm['spear'], mm['topk'], mm['ndcg'], mm['mse'], mm['auc'], mm['time']]); _cf.flush()
             print(f"  [seed {s} {m:>7}] minU={mm['minU']:.1f} gap={mm['gap']:.2f} ||π-π*||={mm['pidist']:.2f} π-RMS={mm['pirms']:.4f} "
                   f"Spear={mm['spear']:.3f} Top-k={mm['topk']:.3f} NDCG={mm['ndcg']:.3f} MSE={mm['mse']:.2f} AUC={mm['auc']:.3f} t={mm['time']:.1f}s", flush=True)
         print(f"[seed {s}] done (n={n}, truth={len(truth)}, budget={budget})", flush=True)

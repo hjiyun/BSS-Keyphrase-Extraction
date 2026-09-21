@@ -20,8 +20,10 @@ DEV = torch.device("cuda"); DT = torch.float64; torch.set_default_dtype(DT)
 N     = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
 NSEED = int(sys.argv[2]) if len(sys.argv) > 2 else 3
 T     = int(sys.argv[3]) if len(sys.argv) > 3 else 3000
+MU    = float(sys.argv[4]) if len(sys.argv) > 4 else 1.2
+ALPHA = float(sys.argv[5]) if len(sys.argv) > 5 else 0.35
 BURN  = T // 2; THIN = 5
-MU, ALPHA, SIG, PIN, POUT = 1.2, 0.35, 0.4, 0.30, 0.02
+SIG, PIN, POUT = 0.4, 0.30, 0.02
 M_REG = kfa.M_REGIONS; DECAY = kfa.DECAY_LR; ZETA = 1.0
 SG = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
 sigm = lambda x: 1 / (1 + np.exp(-np.clip(x, -700, 700)))

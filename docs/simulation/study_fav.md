@@ -232,6 +232,19 @@ O(n²)라 n≥5000 이면 불가(§2.5). AWSGLD≈qSGLD 가 근소 2위(AUC 0.87
 AWSGLD 는 **최적화 최고 + 샘플링 준최고(calibrated) + 수백 배 빠름 + 대형 n 유일 작동** →
 실용적 최선. (표준 단봉에서 AWSGLD≈qSGLD; AWSGLD 고유 우위는 최적화·annealing 탐색·다봉 탈출(Study 3).)
 
+**③ 난이도별 최적화 축, 100시드 (SG-MCMC 5종만, n=1000)**
+(`opt_acmh_fair.py SGONLY=1` → `optacmh_n1000_mu*_seeds.csv`; MH는 O(n²)라 100시드 비현실적이라 제외)
+
+| 난이도 | AWSGLD gap | qSGLD gap | cycSGLD gap | SGHMC gap | SGLD gap | AWSGLD AUC | AWSGLD π-RMS |
+|---|---|---|---|---|---|---|---|
+| Easy (μ2.5,α0.1) | **1.01±0.01** | 1.61±0.04 | 4.91±0.52 | 42.98±3.69 | 391.3±10.0 | 0.961±0.005 | 0.0081±0.0002 |
+| Moderate (μ1.8,α0.2) | **1.01±0.01** | 1.63±0.03 | 4.37±0.52 | 32.51±3.17 | 350.8±8.4 | 0.960±0.005 | 0.0087±0.0002 |
+| Difficult (μ1.0,α0.4) | **1.01±0.01** | 1.64±0.03 | 3.27±0.35 | 18.57±1.71 | 303.7±4.4 | 0.925±0.013 | 0.0099±0.0002 |
+
+→ 세 난이도 모두 **AWSGLD opt.gap 1.01±0.01로 1위**(100시드로 std 견고). qSGLD와 정확도(AUC)는
+동일하나 최적화 정밀도(gap·π-RMS)에서 AWSGLD 우위. cycSGLD는 순위는 붙으나 π-RMS 4~5배 나쁘고,
+SGHMC·SGLD는 gap 폭발. 결론이 난이도 전반에서 불변.
+
 ## 5. 런타임 (알고리즘별 wall-clock)
 
 환경: RTX PRO 6000 (CUDA), torch float64, dense matvec. **시드 1개 기준 초** (총 시간 =
@@ -317,6 +330,7 @@ python3 acmh_scale.py                                                # 원논문
 | `acmh_fair.py` | **2축 공정비교 — 샘플링(T=1)** acMH vs SG-MCMC 정식 프로토콜 (**§4.6②**) |
 | `opt_acmh_fair.py` | **2축 공정비교 — 최적화(annealing)** annealed acMH vs annealed SG-MCMC (**§4.6①**) |
 | `optacmh_n1000_mu1.2_a0.35_seeds.csv` | §4.6① **100시드** 시드별 원자료 (crash-safe append) |
+| `optacmh_n1000_mu{2.5,1.8,1.0}_a{0.1,0.2,0.4}_seeds.csv` | §4.6③ 난이도별 **100시드** SG-only 원자료 |
 | `docreal_gpu.py` | **실제 Hulth 문서 1/3/10개 병합**(표준 단봉) — 최적화+샘플링 (**§3.3·4.5**) |
 | `docreal_opt_k{1,3,10}.csv` / `docreal_samp_k{1,3,10}.csv` | 실문서 문서 수 스윕 결과 |
 | `redesign_gpu_n300_*_k{3,10}.csv` | (구) 합성 문서 라벨 배정 — `docreal_*`로 대체됨, 참고용 |

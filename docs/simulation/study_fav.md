@@ -245,6 +245,22 @@ AWSGLD 는 **최적화 최고 + 샘플링 준최고(calibrated) + 수백 배 빠
 동일하나 최적화 정밀도(gap·π-RMS)에서 AWSGLD 우위. cycSGLD는 순위는 붙으나 π-RMS 4~5배 나쁘고,
 SGHMC·SGLD는 gap 폭발. 결론이 난이도 전반에서 불변.
 
+**④ Sparse 난이도 — 희소 라벨, 100시드 (SG-MCMC 5종, n=1000)**
+관측 positive Y=1 의 75%를 제거한 PU 희소 라벨(μ1.8·α0.2 base, truth는 유지·관측만 희소).
+(`opt_acmh_fair.py SGONLY=1 SPARSELAB=1` → `optacmh_n1000_mu1.8_a0.2_splab_seeds.csv`)
+
+| method | opt.gap | π-RMS | Spearman | Top-k | NDCG | AUC |
+|---|---|---|---|---|---|---|
+| **AWSGLD** | **1.01±0.01** | **0.0098±0.0002** | **0.843±0.019** | **0.858±0.012** | **0.881±0.011** | **0.936±0.013** |
+| qSGLD | 1.67±0.03 | 0.0127±0.0002 | 0.837±0.022 | 0.857±0.015 | 0.880±0.013 | 0.933±0.015 |
+| cycSGLD | 5.65±0.38 | 0.1128±0.0063 | 0.783±0.055 | 0.846±0.025 | 0.864±0.025 | 0.906±0.032 |
+| SGHMC | 18.52±0.87 | 0.1643±0.0064 | 0.389±0.195 | 0.685±0.076 | 0.709±0.076 | 0.702±0.101 |
+| SGLD | 292.52±2.39 | 0.2529±0.0044 | 0.035±0.057 | 0.562±0.027 | 0.563±0.030 | 0.517±0.030 |
+
+→ 희소 라벨(관측 25%)에서도 **AWSGLD가 전 지표 1위**(opt.gap 1.01±0.01, AUC 0.936). qSGLD 근소
+2위, cycSGLD는 순위는 붙으나 π-RMS 11배 나쁨(0.113 vs 0.010), SGHMC·SGLD는 붕괴. 라벨이 적어도
+전처리 Langevin(AWSGLD/qSGLD)의 우위가 유지된다.
+
 ## 5. 런타임 (알고리즘별 wall-clock)
 
 환경: RTX PRO 6000 (CUDA), torch float64, dense matvec. **시드 1개 기준 초** (총 시간 =
@@ -331,6 +347,7 @@ python3 acmh_scale.py                                                # 원논문
 | `opt_acmh_fair.py` | **2축 공정비교 — 최적화(annealing)** annealed acMH vs annealed SG-MCMC (**§4.6①**) |
 | `optacmh_n1000_mu1.2_a0.35_seeds.csv` | §4.6① **100시드** 시드별 원자료 (crash-safe append) |
 | `optacmh_n1000_mu{2.5,1.8,1.0}_a{0.1,0.2,0.4}_seeds.csv` | §4.6③ 난이도별 **100시드** SG-only 원자료 |
+| `optacmh_n1000_mu1.8_a0.2_splab_seeds.csv` | §4.6④ Sparse(희소 라벨) **100시드** SG-only 원자료 |
 | `docreal_gpu.py` | **실제 Hulth 문서 1/3/10개 병합**(표준 단봉) — 최적화+샘플링 (**§3.3·4.5**) |
 | `docreal_opt_k{1,3,10}.csv` / `docreal_samp_k{1,3,10}.csv` | 실문서 문서 수 스윕 결과 |
 | `redesign_gpu_n300_*_k{3,10}.csv` | (구) 합성 문서 라벨 배정 — `docreal_*`로 대체됨, 참고용 |

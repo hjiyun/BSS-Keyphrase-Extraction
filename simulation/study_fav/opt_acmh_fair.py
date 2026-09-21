@@ -22,11 +22,15 @@ M_REG = kfa.M_REGIONS; DECAY = kfa.DECAY_LR; ZETA = 1.0; MAXB = 3000; EPS = 1.0
 METH = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD", "acMH"]   # acMH 마지막(느림) → 앞의 빠른 것부터 실시간 출력
 if os.environ.get("SGONLY"):                                     # SGONLY=1 → MH(acMH) 제외, SG-MCMC 5종만
     METH = [m for m in METH if m != "acMH"]
+SP_KP  = bool(os.environ.get("SPARSEKP"))                        # 희소 키프레이즈: positive 그룹 비율 축소
+SP_LAB = bool(os.environ.get("SPARSELAB"))                       # 희소 라벨: 관측 Y=1 의 75% 드롭(PU)
+SPTAG  = os.environ.get("SPTAG", "")                             # 파일명 태그(변형 구분)
+ZP = [0.15, 0.25, 0.60] if SP_KP else [0.4, 0.3, 0.3]
 sigm = lambda x: 1 / (1 + np.exp(-np.clip(x, -700, 700)))
 
 
 def gen(seed):
-    rng = np.random.default_rng(seed); z = rng.choice([0, 1, 2], N, p=[0.4, 0.3, 0.3])
+    rng = np.random.default_rng(seed); z = rng.choice([0, 1, 2], N, p=ZP)
     mu = np.array([MU, 0.0, -MU]); ts = mu[z] + SIG * rng.standard_normal(N)
     A = np.zeros((N, N))
     for i in range(N):
@@ -35,6 +39,8 @@ def gen(seed):
     A = A[np.ix_(keep, keep)]; ts = ts[keep]; n = len(ts); deg = A.sum(1)
     B = np.eye(n) - 0.85 * solve(np.diag(deg), A).T; u0 = solve(B, np.ones(n) * 0.15)
     Y = (rng.random(n) < (1 - ALPHA) * sigm(ts)).astype(np.float64)
+    if SP_LAB:                                                   # 관측 positive 75% 제거
+        pos = np.where(Y == 1)[0]; Y[pos[rng.random(len(pos)) < 0.75]] = 0.0
     a0 = float(kfa.alpha_find(u0, Y, kfa.grid))
     truth = np.where(ts > 0)[0]
     return n, B, u0, Y, a0, ts, truth
@@ -126,7 +132,7 @@ def metric(bth, bU, Umin, ts, truth, n, pistar):
 def main():
     R = {m: [] for m in METH}
     import csv as _csv
-    csvfn = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"optacmh_n{N}_mu{MU}_a{ALPHA}_seeds.csv")
+    csvfn = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"optacmh_n{N}_mu{MU}_a{ALPHA}" + (f"_{SPTAG}" if SPTAG else "") + "_seeds.csv")
     _new = not os.path.exists(csvfn)
     _cf = open(csvfn, "a", newline=""); _cw = _csv.writer(_cf)
     if _new: _cw.writerow(["seed", "method", "minU", "gap", "pidist", "pirms", "spear", "topk", "ndcg", "mse", "auc", "time"])

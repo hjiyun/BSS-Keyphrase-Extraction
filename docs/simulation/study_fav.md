@@ -261,6 +261,26 @@ SGHMC·SGLD는 gap 폭발. 결론이 난이도 전반에서 불변.
 2위, cycSGLD는 순위는 붙으나 π-RMS 11배 나쁨(0.113 vs 0.010), SGHMC·SGLD는 붕괴. 라벨이 적어도
 전처리 Langevin(AWSGLD/qSGLD)의 우위가 유지된다.
 
+### 4.7 실데이터 문서 수 스윕 — 표준 단봉 병합, 100시드 (SG-MCMC 5종)
+
+실제 Hulth 문서 K개를 **합집합 그래프 하나의 표준 에너지**(u0=병합 TextRank, 단일 중심 → 단봉)로
+병합. §3.3(mixture 다봉)과 달리 단봉·θ*(MAP) 존재. 문서는 dense 목록 앞 K개, 시드는 PU 관측 Y·
+샘플러 난수를 100회 변화. (`docreal_optfair.py`, SG-only; 실데이터라 Spearman·MSE·cov90 정의 불가 →
+opt.gap·π-RMS + 키워드 truth 기반 Top-k·NDCG·AUC)
+
+| K | n | truth | **AWSGLD gap** | qSGLD gap | AWSGLD π-RMS | AWSGLD AUC | qSGLD AUC |
+|---|---|---|---|---|---|---|---|
+| 1 | 76 | 26 | **1.02±0.01** | 1.13±0.03 | 0.0489 | 0.814 | 0.842 |
+| 5 | 188 | 78 | **1.04±0.03** | 1.64±0.22 | 0.0340 | 0.817 | 0.810 |
+| 15 | 457 | 197 | **1.01±0.01** | 1.58±0.06 | 0.0181 | 0.834 | 0.836 |
+| 30 | 868 | 388 | **1.01±0.00** | 1.69±0.06 | 0.0130 | 0.841 | 0.837 |
+
+→ 문서 1→30(n=76→868) 전 규모에서 **최적화 정밀도(opt.gap·π-RMS)는 AWSGLD 단독 1위**(gap 1.01~1.04,
+qSGLD 1.1~1.7). **정확도(AUC)는 AWSGLD≈qSGLD** — Δ가 K마다 −0.028~+0.007로 부호가 바뀌는 동률(노이즈
+내). AWSGLD가 정확도로 이기는 문서 조합을 40개 랜덤 탐색해도 held-out 검증에서 Δ 소멸(노이즈 확인).
+cycSGLD는 순위 근접하나 π-RMS 5~7배 나쁨, SGHMC·SGLD는 붕괴. **실데이터·대규모에서도 결론 불변:
+AWSGLD 강점은 최적화 정밀도, 순위는 qSGLD와 동률.**
+
 ## 5. 런타임 (알고리즘별 wall-clock)
 
 환경: RTX PRO 6000 (CUDA), torch float64, dense matvec. **시드 1개 기준 초** (총 시간 =
@@ -348,6 +368,8 @@ python3 acmh_scale.py                                                # 원논문
 | `optacmh_n1000_mu1.2_a0.35_seeds.csv` | §4.6① **100시드** 시드별 원자료 (crash-safe append) |
 | `optacmh_n1000_mu{2.5,1.8,1.0}_a{0.1,0.2,0.4}_seeds.csv` | §4.6③ 난이도별 **100시드** SG-only 원자료 |
 | `optacmh_n1000_mu1.8_a0.2_splab_seeds.csv` | §4.6④ Sparse(희소 라벨) **100시드** SG-only 원자료 |
+| `docreal_optfair.py` | §4.7 실데이터 문서 수 스윕(표준 단봉, SG-only) 스크립트 |
+| `docreal_optfair_k{1,5,15,30}_seeds.csv` | §4.7 실데이터 K=1/5/15/30 **100시드** 원자료 |
 | `docreal_gpu.py` | **실제 Hulth 문서 1/3/10개 병합**(표준 단봉) — 최적화+샘플링 (**§3.3·4.5**) |
 | `docreal_opt_k{1,3,10}.csv` / `docreal_samp_k{1,3,10}.csv` | 실문서 문서 수 스윕 결과 |
 | `redesign_gpu_n300_*_k{3,10}.csv` | (구) 합성 문서 라벨 배정 — `docreal_*`로 대체됨, 참고용 |

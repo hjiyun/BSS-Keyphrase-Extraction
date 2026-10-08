@@ -27,7 +27,10 @@ METH = ["SGLD", "qSGLD", "cycSGLD", "SGHMC", "AWSGLD"]
 DOCSETS = {1: ["1994"], 3: ["1994", "212", "227"],
            10: ["1994", "212", "227", "233", "260", "1982", "2117", "206", "374", "403"]}
 _ids = [r[0] for r in csv.reader(open(os.path.join(exp.BASE, "selected_ids.txt")))]
-DOCS = DOCSETS.get(K, _ids[:K])                  # 하드코딩 K(1/3/10) 아니면 dense 앞 K개
+if os.environ.get("DOCLIST"):                    # 문서 목록 직접 지정(쉼표구분) → K-scan과 동일 집합의 부분집합 실험용
+    DOCS = os.environ["DOCLIST"].split(",")
+else:
+    DOCS = DOCSETS.get(K, _ids[:K])              # 하드코딩 K(1/3/10) 아니면 dense 앞 K개
 sigm = of.sigm
 G = {dc: exp.build_graph(dc) for dc in DOCS}
 
@@ -57,17 +60,22 @@ def make_Y(n, truth, u0, seed):
     return Y, a0
 
 
-def acc_metric(bth, bU, Umin, truth, n, pistar):
+def acc_metric(bth, bU, Umin, truth, n, pistar, obs):
+    """held-out 평가: 관측 Y=1 노드(obs)를 랭킹 pool·평가 target 양쪽에서 제외(PU 설정 부합, 정보누출 차단).
+    opt.gap·π-RMS 는 MAP(θ*) 대비라 누출 없음 → 그대로 전체 노드로 계산."""
     gap = bU - Umin; pihat = sigm(bth)
     pidist = float(np.linalg.norm(pihat - pistar)); pirms = float(np.sqrt(np.mean((pihat - pistar) ** 2)))
-    order = np.argsort(-pihat); nt = len(truth); Tset = set(truth.tolist())
-    topk = len(set(order[:nt].tolist()) & Tset) / max(nt, 1)
-    rel = np.zeros(n); rel[truth] = 1; disc = 1 / np.log2(np.arange(2, 2 + nt)); ndcg = float((rel[order[:nt]] * disc).sum() / disc.sum())
-    pos = nt; neg = n - nt; tp = fp = 0; tpr = [0.]; fpr = [0.]
+    held = [t for t in truth.tolist() if t not in obs]; Hset = set(held); nt = len(held)
+    order = [i for i in np.argsort(-pihat).tolist() if i not in obs]      # 미관측 노드만 랭킹
+    npool = len(order)
+    topk = len(set(order[:nt]) & Hset) / max(nt, 1)
+    disc = 1 / np.log2(np.arange(2, 2 + nt)); rel = np.array([1.0 if i in Hset else 0.0 for i in order[:nt]])
+    ndcg = float((rel * disc).sum() / disc.sum()) if nt else 0.0
+    pos = nt; neg = npool - nt; tp = fp = 0; tpr = [0.]; fpr = [0.]
     for i in order:
-        if i in Tset: tp += 1
+        if i in Hset: tp += 1
         else: fp += 1
-        tpr.append(tp / pos); fpr.append(fp / max(neg, 1))
+        tpr.append(tp / max(pos, 1)); fpr.append(fp / max(neg, 1))
     auc = float(np.trapezoid(tpr, fpr))
     return dict(minU=bU, gap=gap, pidist=pidist, pirms=pirms, topk=topk, ndcg=ndcg, auc=auc)
 
@@ -75,31 +83,32 @@ def acc_metric(bth, bU, Umin, truth, n, pistar):
 def main():
     docs = DOCS; n, B, u0, truth = build_merge(docs)
     print(f"\n{'#'*66}\n실데이터 문서수 K={K} docs={docs} n={n} truth={len(truth)}  ({NSEED}시드, SG-only)\n{'#'*66}", flush=True)
-    csvfn = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"docreal_optfair_k{K}_seeds.csv")
+    _tag = ("_" + os.environ["TAG"]) if os.environ.get("TAG") else ""
+    csvfn = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"docreal_optfair_k{K}{_tag}_seeds.csv")
     cf = open(csvfn, "w", newline=""); cw = csv.writer(cf)
-    cw.writerow(["seed", "method", "minU", "gap", "pidist", "pirms", "topk", "ndcg", "auc", "time"])
-    R = {m: [] for m in METH}
+    cw.writerow(["seed", "method", "minU", "gap", "pidist", "pirms", "topk", "ndcg", "auc", "Te", "time"])
+    R = {m: [] for m in METH}; alphas = []
     for s in range(NSEED):
-        Y, a0 = make_Y(n, truth, u0, s)
+        Y, a0 = make_Y(n, truth, u0, s); alphas.append(a0); obs = set(np.where(Y == 1)[0].tolist())
         U, gradU, BtB = of.make(n, B, u0, Y, a0)
         P = inv(BtB + 1e-6 * np.trace(BtB) / n * np.eye(n)); P = 0.5 * (P + P.T); Lc = cholesky(P + 1e-10 * np.eye(n))
         th = u0.copy()
         for _ in range(8000): th = th - 0.05 * gradU(th)
         Umin = U(th); pistar = sigm(th); of.sg_run._umin = Umin
-        _, _, reach = of.sg_run("AWSGLD", of.MAXB, n, B, u0, Y, a0, U, gradU, P, Lc, np.random.default_rng(0))
-        budget = reach if reach is not None else of.MAXB - 1
-        for m in METH:
-            t0 = time.time(); bU, bth, _ = of.sg_run(m, budget, n, B, u0, Y, a0, U, gradU, P, Lc, np.random.default_rng(0)); dt = time.time() - t0
-            mm = acc_metric(bth, bU, Umin, truth, n, pistar); mm['time'] = dt; R[m].append(mm)
-            cw.writerow([s, m, mm['minU'], mm['gap'], mm['pidist'], mm['pirms'], mm['topk'], mm['ndcg'], mm['auc'], dt]); cf.flush()
-        if s % 10 == 0: print(f"[seed {s}] budget={budget}", flush=True)
+        for m in METH:                                   # 예산=고정 MAXB(공정), Tε=EPS 도달 스텝(속도) 별도 기록
+            t0 = time.time(); bU, bth, reach = of.sg_run(m, of.MAXB, n, B, u0, Y, a0, U, gradU, P, Lc, np.random.default_rng(0)); dt = time.time() - t0
+            mm = acc_metric(bth, bU, Umin, truth, n, pistar, obs)
+            mm['Te'] = reach if reach is not None else of.MAXB; mm['time'] = dt; R[m].append(mm)
+            cw.writerow([s, m, mm['minU'], mm['gap'], mm['pidist'], mm['pirms'], mm['topk'], mm['ndcg'], mm['auc'], mm['Te'], dt]); cf.flush()
+        if s % 10 == 0: print(f"[seed {s}] a0={a0:.3f}", flush=True)
 
     def ms(m, k, f="{:.3f}"):
         v = [r[k] for r in R[m]]; return f.format(np.mean(v)) + "±" + f.format(np.std(v))
-    print(f"\n실데이터 K={K} 병합 최적화 (SG-MCMC, {NSEED}시드, n={n}, truth={len(truth)})")
-    print(f"  {'method':>8} | {'min U':>13} {'opt.gap':>11} {'||π-π*||':>10} {'π-RMS':>11} | {'Top-k':>11} {'NDCG':>11} {'AUC':>11}")
+    print(f"\n실데이터 K={K} 병합 최적화 (SG-MCMC, {NSEED}시드, n={n}, truth={len(truth)}, "
+          f"α=alpha_find≈{np.mean(alphas):.3f}±{np.std(alphas):.3f}, 예산=고정MAXB={of.MAXB}, held-out 평가)")
+    print(f"  {'method':>8} | {'opt.gap':>11} {'π-RMS':>11} {'Tε(속도)':>13} | {'Top-k':>11} {'NDCG':>11} {'AUC':>11}")
     for m in sorted(METH, key=lambda mm: np.mean([r['gap'] for r in R[mm]])):
-        print(f"  {m:>8} | {ms(m,'minU','{:.1f}'):>13} {ms(m,'gap','{:.2f}'):>11} {ms(m,'pidist','{:.2f}'):>10} {ms(m,'pirms','{:.4f}'):>11} | {ms(m,'topk'):>11} {ms(m,'ndcg'):>11} {ms(m,'auc'):>11}")
+        print(f"  {m:>8} | {ms(m,'gap','{:.2f}'):>11} {ms(m,'pirms','{:.4f}'):>11} {ms(m,'Te','{:.0f}'):>13} | {ms(m,'topk'):>11} {ms(m,'ndcg'):>11} {ms(m,'auc'):>11}")
     print(f"저장: docreal_optfair_k{K}_seeds.csv")
 
 

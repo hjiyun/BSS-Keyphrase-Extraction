@@ -49,7 +49,7 @@ def gen(seed):
     Y = (rng.random(n) < (1 - ALPHA) * sigm(ts)).astype(np.float64)
     if SP_LAB:                                                   # 관측 positive 75% 제거
         pos = np.where(Y == 1)[0]; Y[pos[rng.random(len(pos)) < 0.75]] = 0.0
-    a0 = float(kfa.alpha_find(u0, Y, kfa.grid))
+    a0 = ALPHA if os.environ.get("TRUEALPHA") else float(kfa.alpha_find(u0, Y, kfa.grid))
     truth = np.where(ts > 0)[0]
     return n, B, u0, Y, a0, ts, truth
 
@@ -100,7 +100,7 @@ def acmh_run(budget, n, B, u0, Y, a0, U):
     rng = np.random
     theta = rng.standard_normal(n) * 1.5; hist = [theta.copy()]
     bU = np.inf; bth = None; reach = None; Umin_ref = getattr(sg_run, "_umin", None)
-    lp_cur = kfa.log_posterior(n, Y, a0, theta, u0, B)
+    lp_cur = kfa.posterior_gibbstheta(Y, a0, theta, u0, B, 1.0)
     for t in range(budget):
         Tt = max(1e-4, np.exp(-t / 400))
         if t < 10:
@@ -109,7 +109,7 @@ def acmh_run(budget, n, B, u0, Y, a0, U):
             vars_i = np.sqrt(2.4 * (np.array(hist).var(0, ddof=1) + 0.01))   # sweep당 1회 벡터화
         for i in range(n):
             old = theta[i]; theta[i] = old + rng.normal(0, vars_i[i])
-            lp_star = kfa.log_posterior(n, Y, a0, theta, u0, B)
+            lp_star = kfa.posterior_gibbstheta(Y, a0, theta, u0, B, 1.0)
             if np.log(rng.uniform() + 1e-300) < (lp_star - lp_cur) / Tt:
                 lp_cur = lp_star
             else:
@@ -169,9 +169,9 @@ def main():
         v = [R[m][s][k] for s in range(NSEED)]; return f.format(np.mean(v)) + "±" + f.format(np.std(v))
     print(f"\n최적화 공정비교 (튜닝 LR, 고정예산 MAXB={MAXB})  n={N} μ±{MU} α={ALPHA}  {NSEED}시드"
           f"  [LR: SGLD={LR_SGLD} qSGLD={LR_QSGLD} cyc={LR_CYC} SGHMC={LR_SGHMC} AWSGLD={LR_AWSGLD}]")
-    print(f"  {'method':>8} | {'opt.gap':>11} {'π-RMS':>10} {'Tε(속도)':>13} | {'Spearman':>11} {'Top-k':>11} {'NDCG':>11} {'AUC':>11} | {'time(s)':>11}")
+    print(f"  {'method':>8} | {'min U':>13} {'opt.gap':>11} {'π-RMS':>10} {'Tε(속도)':>13} | {'Spearman':>11} {'Top-k':>11} {'NDCG':>11} {'AUC':>11} | {'time(s)':>11}")
     for m in sorted(METH, key=lambda mm: np.mean([R[mm][s]['gap'] for s in range(NSEED)])):
-        print(f"  {m:>8} | {ms(m,'gap','{:.2f}'):>11} {ms(m,'pirms','{:.4f}'):>10} {ms(m,'Te','{:.0f}'):>13} | {ms(m,'spear'):>11} {ms(m,'topk'):>11} {ms(m,'ndcg'):>11} {ms(m,'auc'):>11} | {ms(m,'time','{:.1f}'):>11}")
+        print(f"  {m:>8} | {ms(m,'minU','{:.2f}'):>13} {ms(m,'gap','{:.2f}'):>11} {ms(m,'pirms','{:.4f}'):>10} {ms(m,'Te','{:.0f}'):>13} | {ms(m,'spear'):>11} {ms(m,'topk'):>11} {ms(m,'ndcg'):>11} {ms(m,'auc'):>11} | {ms(m,'time','{:.1f}'):>11}")
 
 
 if __name__ == "__main__":

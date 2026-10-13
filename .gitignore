@@ -57,3 +57,10 @@ simulation/study_2/MERGE_D10_DONE
 *.DONE
 *_DONE
 simulation/study_fav/*.sh
+
+# Amazon raw dumps (too large for git; re-downloadable)
+data_JOC/amazon/Reviews.csv
+data_JOC/amazon/database.sqlite
+data_JOC/amazon/hashes.txt
+data_JOC/amazon_appliances/*.jsonl.gz
+data_JOC/amazon_fashion/*.jsonl.gz
